@@ -1,0 +1,52 @@
+@use "../../sass/variables/colors" as *;
+@use "../../sass/variables/others" as *;
+@use "../../sass/helpers/mixins" as *;
+
+.searchResult {
+  &:not(:last-of-type) {
+    margin-bottom: 30px;
+  }
+  .ayahText {
+    background-color: $blue-3-color;
+    color: white;
+    font-family: $quran-font;
+    font-size: 1.4rem;
+    border-radius: 10px;
+    padding-bottom: 10px;
+    padding-top: 3px;
+    padding-inline: 20px;
+    margin-bottom: 5px;
+  }
+  .controller {
+    @include centerbyflex("vertical");
+    justify-content: space-between;
+
+    gap: 30px;
+    .info {
+      font-size: 1.1rem;
+      .value {
+        color: $green-3-color;
+      }
+    }
+    .btns {
+      display: flex;
+      gap: 10px;
+      a {
+        display: block;
+        padding: 5px 10px;
+        border: none;
+        outline: none;
+        background-color: $yellow-color;
+        border-radius: 5px;
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: 0.5s;
+        box-shadow: 0 0 4px 0 $black-1-color;
+        &:hover {
+          background-color: $gold-color;
+          box-shadow: 0 0 8px 0 $black-1-color;
+        }
+      }
+    }
+  }
+}

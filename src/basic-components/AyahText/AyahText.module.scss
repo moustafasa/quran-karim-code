@@ -1,0 +1,19 @@
+@use "../../sass/variables/colors" as *;
+@use "../../sass/variables/others" as *;
+@use "../../sass/helpers/mixins" as *;
+
+.verseIcon {
+  position: relative;
+  display: inline-block;
+  font: {
+    size: 1.5625rem;
+    family: $main-font;
+  }
+
+  &::after {
+    content: attr(data-value);
+    @include position(null, absolute, null, null, $left: 50%, $top: 50%);
+    translate: -50% calc(-50% + 3px);
+    font-size: 1rem;
+  }
+}

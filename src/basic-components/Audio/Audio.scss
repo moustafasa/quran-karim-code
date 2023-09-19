@@ -1,0 +1,166 @@
+@use "../../sass/helpers/mixins" as *;
+@use "../../sass/variables/colors" as *;
+@use "../../sass/variables/others" as *;
+@use "sass:map";
+
+@mixin range-parts($part) {
+  @if ($part== "track") {
+    height: 10px;
+    border-radius: 5px;
+    background-color: $blue-1-color;
+  } @else if($part== "thumb") {
+    position: relative;
+    @include one-value-more-properties(18px, width, height);
+    // margin-top = (track height in pixels / 2) - (thumb height in pixels /2)
+    margin-top: -4px;
+    border: 2px solid black;
+    border-radius: 7px;
+    box-shadow: 0 0 10px $blue-3-color;
+    background-color: $blue-2-color;
+    cursor: pointer;
+  } @else if($part== "progress") {
+    height: 10px;
+    background-color: $blue-2-color;
+    border-radius: 5px;
+  }
+}
+
+$chrome: (
+  track: -webkit-slider-runnable-track,
+  thumb: -webkit-slider-thumb,
+);
+
+$firefox: (
+  track: -moz-range-track,
+  thumb: -moz-range-thumb,
+  progress: -moz-range-progress,
+);
+
+$ms: (
+  track: -ms-track,
+  thumb: -ms-thumb,
+);
+
+$all: (
+  chrome: $chrome,
+  firefox: $firefox,
+  ms: $ms,
+);
+
+.audio-cont {
+  width: 100%;
+  @include centerbyflex("vertical");
+  gap: 5px;
+  @include medias("mobile") {
+    gap: 2px;
+  }
+  .audio-btn {
+    @include centerbyflex(null);
+    padding: 5px;
+    border: none;
+    background-color: transparent;
+    color: $blue-3-color;
+    cursor: pointer;
+    outline: none;
+    @include oneValue("&.play-pause-btn", font-size, 0.8rem);
+    @include oneValue("&.volume-btn", font-size, 1rem);
+    @include oneValue("&:disabled", color, yellow);
+  }
+
+  input[type="range"] {
+    --progress: 0%;
+    position: relative;
+    appearance: none;
+    background: none;
+    flex: 1;
+    cursor: pointer;
+
+    @include oneValue("&:disabled", pointer-events, none);
+    @include oneValue("&:focus::before", background-color, $blue-3-color);
+    @include oneValue("&:disabled::before", background-color, grey);
+
+    @each $browser, $prefixes in $all {
+      $extra: null;
+      @if ($browser== "chrome") {
+        $extra: none;
+      }
+      @each $key, $value in $prefixes {
+        &::#{$value} {
+          appearance: $extra;
+          @include range-parts($key);
+        }
+        &:focus::#{$value} {
+          @if ($key== "track") {
+            background-color: #66a8c6;
+          } @else if($key== "progress") {
+            background-color: $blue-3-color;
+          } @else if($key== "thumb") {
+            background-color: $blue-3-color;
+          }
+        }
+
+        &:disabled::#{$value} {
+          @if ($key== "thumb") {
+            background-color: $black-1-color;
+          } @else {
+            background-color: grey;
+          }
+        }
+      }
+    }
+
+    &::before {
+      content: "";
+      @include position(
+        null,
+        absolute,
+        var(--progress),
+        null,
+        $left: 0,
+        $top: 0
+      );
+      @include range-parts("progress");
+    }
+  }
+
+  .display-track {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    @include medias("mobile") {
+      gap: 5px;
+    }
+    @include oneValue("span", font-size, 1rem);
+    [type="range"] {
+      flex: 1;
+      @each $browser, $prefixes in $all {
+        &::#{map.get($prefixes,'thumb')} {
+          scale: 0;
+          transition: 0.1s;
+        }
+        &:hover,
+        &:focus {
+          &::#{map.get($prefixes,'thumb')} {
+            scale: 1;
+          }
+        }
+      }
+    }
+  }
+  .volume {
+    position: relative;
+    &:hover .range-cont {
+      display: block;
+    }
+    .range-cont {
+      display: none;
+      @include position(null, absolute, null, null, $top: -10px, $left: 50%);
+      padding: 5px;
+      transition: 0.5s;
+      transform-origin: 0% 50%;
+      rotate: -90deg;
+      @include oneValue('[type="range"]', display, block);
+    }
+  }
+}

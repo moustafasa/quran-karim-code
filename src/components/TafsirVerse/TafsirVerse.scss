@@ -1,0 +1,22 @@
+@use "../../sass/variables/colors" as *;
+@use "../../sass/variables/others" as *;
+@use "../../sass/helpers/mixins" as *;
+
+.tafsir-verse {
+  .tafsir-text {
+    font-family: $main-font;
+  }
+  .verse-text {
+    background-color: $blue-3-color;
+    display: block;
+    border-radius: 5px;
+    padding-bottom: 10px;
+    padding-inline: 10px;
+    margin-block: 20px;
+    color: white;
+    &.active,
+    &:hover {
+      background-color: $blue-2-color;
+    }
+  }
+}

@@ -1,0 +1,25 @@
+@use "../../sass/variables/others" as *;
+@use "../../sass/variables/colors" as *;
+@use "../../sass/helpers/mixins" as *;
+
+.sorah-name {
+  position: relative;
+  font-family: $quran-name-font;
+  @include oneValue("&:not(:first-child)", margin-top, 20px);
+
+  img {
+    display: block;
+    margin-inline: auto;
+    @include medias("mobile") {
+      width: 250px;
+    }
+  }
+  h2 {
+    @include position(null, absolute, 100%, 100%, $top: 0, $left: 0);
+    @include centerbyflex(null);
+    font-size: 2.55rem;
+    @include medias("mobile") {
+      font-size: 1.7rem;
+    }
+  }
+}

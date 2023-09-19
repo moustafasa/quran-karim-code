@@ -1,0 +1,23 @@
+@use "./colors" as *;
+
+$main-font: "Noto Sans Arabic", sans-serif;
+
+$quran-font: "Amiri Quran Colored Regular", serif;
+
+$quran-name-font: "Noto Naskh Arabic", serif;
+
+$nav-height: 70px;
+
+$black-shadow: 0 0 10px black;
+
+$blue-3-6-shadow: 0 0 10px
+  rgba(
+    $color: $blue-3-color,
+    $alpha: 0.6,
+  );
+
+$blue-3-8-shadow: 0 0 20px
+  rgba(
+    $color: $blue-3-color,
+    $alpha: 0.8,
+  );

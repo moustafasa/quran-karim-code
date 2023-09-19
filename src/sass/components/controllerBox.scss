@@ -1,0 +1,16 @@
+@use "../helpers/mixins" as *;
+@use "../variables/colors" as *;
+@use "../variables/others" as *;
+
+.controller {
+  display: grid;
+  grid-template-columns: minmax(90px, 100px) minmax(100px, 1fr);
+  gap: 10px;
+  align-items: center;
+  width: 100%;
+  span {
+    text-align: center;
+    font-size: 1.1rem;
+    font-weight: bold;
+  }
+}

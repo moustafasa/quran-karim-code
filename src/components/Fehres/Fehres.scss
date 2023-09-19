@@ -1,0 +1,57 @@
+@use "../../sass/helpers/mixins" as *;
+@use "../../sass/variables/colors" as *;
+@use "../../sass/variables/others" as *;
+
+.fehres {
+  font: {
+    family: $quran-font;
+    size: 1.8rem;
+  }
+  text-align: center;
+  line-height: 2.1;
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    td,
+    th {
+      padding: {
+        bottom: 15px;
+        inline: 20px;
+      }
+      &:first-child {
+        @include one-value-more-properties(
+          10px,
+          border-top-right-radius,
+          border-bottom-right-radius
+        );
+      }
+      &:last-child {
+        @include one-value-more-properties(
+          10px,
+          border-top-left-radius,
+          border-bottom-left-radius
+        );
+      }
+    }
+    thead {
+      tr {
+        border-bottom: 3px solid white;
+        background-color: $black-1-color;
+        color: white;
+        @include oneValue("th", font-weight, normal);
+      }
+    }
+    tbody {
+      tr {
+        height: 60px;
+        cursor: pointer;
+        transition: 0.5s;
+        @include oneValue("&:hover", background-color, $yellow-color);
+        td {
+          line-height: 1;
+          text-align: center;
+        }
+      }
+    }
+  }
+}

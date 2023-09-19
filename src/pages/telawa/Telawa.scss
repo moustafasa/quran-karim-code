@@ -1,0 +1,12 @@
+@use "../../sass/variables/colors" as *;
+@use "../../sass/variables/others" as *;
+@use "../../sass/helpers/mixins" as *;
+
+.telawa {
+  font: {
+    family: $quran-font;
+    size: 1.7rem;
+  }
+  line-height: 2.1;
+  text-align: center;
+}

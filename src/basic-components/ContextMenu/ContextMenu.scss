@@ -1,0 +1,30 @@
+@use "../../sass/helpers/mixins" as *;
+@use "../../sass/variables/colors" as *;
+@use "../../sass/variables/others" as *;
+
+.context-menu {
+  @include position($black-2-color, absolute, 300px, null);
+  padding: 10px;
+  border-radius: 10px;
+  z-index: 1000;
+  cursor: default;
+  font-family: $main-font;
+  @include medias("mobile") {
+    width: 240px;
+  }
+  li {
+    padding: 10px 30px;
+    border-radius: 10px;
+    transition: 0.5s;
+    color: white;
+    font-size: 1.25rem;
+    line-height: 1;
+    text-align: right;
+    cursor: pointer;
+    &.disabled {
+      pointer-events: none;
+      color: #888;
+    }
+    @include oneValue("&:hover,&:active", background-color, #444);
+  }
+}

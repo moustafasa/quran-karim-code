@@ -1,0 +1,26 @@
+@use "../../sass/helpers/mixins" as *;
+@use "../../sass/variables/colors" as *;
+@use "../../sass/variables/others" as *;
+
+.main-heading {
+  position: relative;
+  @include centerbyflex(null);
+  width: fit-content;
+  height: 100px;
+  margin: 0 auto 40px;
+  border-radius: 50px;
+  background-color: $yellow-color;
+  @include medias("mobile") {
+    margin-top: 30px;
+  }
+  span {
+    @include position(null, absolute, 100%, null, $top: 50%, $left: 0);
+    @include centerbyflex(null);
+    font-size: 2.75rem;
+    color: $blue-4-color;
+    translate: 0 -50%;
+  }
+  img {
+    max-height: 100%;
+  }
+}

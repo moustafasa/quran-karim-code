@@ -1,0 +1,10 @@
+@use "../../sass/variables/colors" as *;
+@use "../../sass/variables/others" as *;
+@use "../../sass/helpers/mixins" as *;
+
+.tafsir {
+  font-family: $quran-font;
+  line-height: 2.1;
+  font-size: 30px;
+  text-align: center;
+}

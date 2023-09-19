@@ -1,0 +1,90 @@
+@use "../variables/colors" as *;
+@use "../helpers/mixins" as *;
+@use "../variables/others" as *;
+// start design roles
+*,
+*::after,
+*::before {
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  scrollbar-width: thin;
+  scrollbar-color: $yellow-color white;
+}
+
+*::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+
+*::-webkit-scrollbar-track {
+  background-color: white;
+  border-radius: 5px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: $yellow-color;
+  border: 2px solid white;
+  border-radius: 5px;
+}
+
+body {
+  padding-top: 150px;
+  padding-bottom: 50px;
+  font-family: $main-font;
+}
+html {
+  scroll-behavior: smooth;
+  font-weight: 400;
+  @include medias("mobile") {
+    font-size: 13px;
+  }
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+ul,
+ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+img {
+  max-width: 100%;
+}
+
+// start container roles
+.container {
+  @include one-value-more-properties(15px, padding-left, padding-right);
+  margin-inline: auto;
+}
+
+/* Small */
+@include medias("more mobile") {
+  .container {
+    width: 750px;
+  }
+}
+/* Medium */
+@include medias("more small") {
+  .container {
+    width: 970px;
+  }
+}
+@include medias("large") {
+  .container {
+    width: 1170px;
+  }
+}
+
+.hidden {
+  display: none !important;
+}
+.clear {
+  clear: both;
+}
+
+/* end global rules  */

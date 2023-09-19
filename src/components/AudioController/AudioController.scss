@@ -1,0 +1,9 @@
+@use "../../sass/helpers/mixins" as *;
+@use "../../sass/variables/colors" as *;
+@use "../../sass/variables/others" as *;
+
+.audio-controller {
+  @include position(white, fixed, 100%, null, $left: 0, $bottom: 0);
+  padding: 15px;
+  box-shadow: $blue-3-6-shadow;
+}

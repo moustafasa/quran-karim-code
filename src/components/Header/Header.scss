@@ -1,0 +1,102 @@
+@use "../../sass/variables/colors" as *;
+@use "../../sass/variables/others" as *;
+@use "../../sass/helpers/mixins" as *;
+
+header {
+  @include position(
+    $blue-4-color,
+    absolute,
+    100%,
+    $nav-height,
+    $top: 0,
+    $left: 0
+  );
+  color: white;
+  z-index: 200000;
+  box-shadow: $black-shadow;
+  @include medias("mobile") {
+    height: auto;
+  }
+  .container {
+    @include centerbyflex("vertical");
+    justify-content: space-between;
+    height: 100%;
+    padding-block: 10px;
+    @include medias("mobile") {
+      flex-direction: column;
+      width: fit-content;
+      gap: 5px;
+    }
+    .logo {
+      @include centerbyflex("vertical");
+      gap: 15px;
+      @include oneValue("h1", font-size, 1.1rem);
+      @include oneValue("img", width, 50px);
+      @include medias("mobile") {
+        flex-direction: column;
+        gap: 5px;
+        text-align: center;
+      }
+    }
+    .search {
+      position: relative;
+      input {
+        display: block;
+        max-height: 40px;
+        max-width: 250px;
+        padding: 0px 10px 10px 30px;
+        border-radius: 5px;
+        border: 1px solid $yellow-color;
+        background-color: $blue-4-color;
+        caret-color: $yellow-color;
+        color: $yellow-color;
+        font-size: 1.05rem;
+        font-family: $quran-font;
+        transition: 0.5s;
+
+        &:focus {
+          outline: none;
+          background-color: $blue-3-color;
+        }
+        &::placeholder {
+          color: $green-1-color;
+          font-size: 1rem;
+        }
+      }
+
+      button {
+        @include centerbyflex(null);
+        @include centerbyposition("vertical", absolute);
+        left: 1px;
+        font-size: 1.1rem;
+        border: none;
+        outline: none;
+        background-color: transparent;
+        padding-inline: 5px;
+        color: $yellow-color;
+        cursor: pointer;
+      }
+    }
+    nav {
+      display: flex;
+      justify-content: flex-end;
+      gap: 25px;
+      font-size: 1rem;
+      text-align: center;
+      @include medias("mobile") {
+        justify-content: space-evenly;
+        gap: 0;
+        width: 100%;
+      }
+      a {
+        @include centerbyflex(null);
+        height: 100%;
+        transition: 0.5s;
+        &:hover {
+          color: $yellow-color;
+          scale: 1.2;
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,14 @@
+@use "../../sass/variables/colors" as *;
+@use "../../sass/variables/others" as *;
+@use "../../sass/helpers/mixins" as *;
+
+@include oneValue(".basmalah", display, block);
+
+.verse-text {
+  display: inline;
+  scroll-margin-top: 100px;
+  cursor: pointer;
+  transition: 0.5s;
+  @include oneValue("&:hover,&.active", color, $blue-2-color);
+  @include oneValue("&.saved", color, $green-3-color);
+}
