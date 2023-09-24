@@ -29,9 +29,14 @@
   border-radius: 5px;
 }
 
+.Toastify__toast--error {
+  top: 20px;
+  z-index: 10000;
+}
+
 body {
-  padding-top: 150px;
-  padding-bottom: 50px;
+  // padding-top: 150px;
+  // padding-bottom: 50px;
   font-family: $main-font;
 }
 html {

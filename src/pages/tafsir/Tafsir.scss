@@ -7,4 +7,16 @@
   line-height: 2.1;
   font-size: 30px;
   text-align: center;
+  .tafsir-msg {
+    font-family: $main-font;
+    // margin-bottom: 10px;
+    // background-color: $blue-3-color;
+    // color: white;
+    width: fit-content;
+    padding-inline: 15px;
+    margin-inline: auto;
+    border-radius: 10px;
+    margin-block: 50px;
+    border: 2px dashed $blue-2-color;
+  }
 }

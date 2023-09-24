@@ -3,17 +3,13 @@ import ReactDOM from "react-dom/client";
 import App from "./App";
 import store from "./rtk/store";
 import { Provider } from "react-redux";
+import { BrowserRouter } from "react-router-dom";
 
 // style
 import "./sass/components/animations.scss";
-import "./sass/components/buttons.scss";
 import "./sass/components/fonts.scss";
 import "./sass/components/globals.scss";
-import "./sass/components/headings.scss";
-import "./sass/components/inputs.scss";
 import "./sass/components/controllerBox.scss";
-import { BrowserRouter } from "react-router-dom";
-import { fetchSwar } from "./rtk/slices/swarSlice";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(

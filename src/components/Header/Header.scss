@@ -12,7 +12,6 @@ header {
     $left: 0
   );
   color: white;
-  z-index: 200000;
   box-shadow: $black-shadow;
   @include medias("mobile") {
     height: auto;

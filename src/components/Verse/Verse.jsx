@@ -1,48 +1,79 @@
 import React, { memo, useEffect, useRef, useState } from "react";
 import "./Verse.scss";
 import ContextMenu from "../../basic-components/ContextMenu/ContextMenu";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  changeCurrentRecitingAyah,
   changeCurrentTime,
   changePlayState,
   getAyahTimingById,
   getCurrentPlayState,
-  getCurrentRecitingAyah,
-  getCurrentTime,
+  getCurrentReciterId,
 } from "../../rtk/slices/recitingSlice";
 import AyahText from "../../basic-components/AyahText/AyahText";
+import { changeTelawaSavedAyah } from "../../rtk/slices/telawaSlice";
+import { changeTafsirSavedAyah } from "../../rtk/slices/tafsirSlice";
+import {
+  changeFocus,
+  checkFocusedAyah,
+  getCurrentSorah,
+} from "../../rtk/slices/swarSlice";
+import useContextPosition from "../../customHooks/useContextPosition";
+import { useLongPress } from "use-long-press";
 
-const Verse = ({ ayah, active, page }) => {
+const Verse = ({ ayah, activeReciting, activeReading, page }) => {
+  // states
   const [contextShow, setContextShow] = useState(false);
   const [contextPosition, setContextPosition] = useState({ left: 0, top: 0 });
+  const ayahKey = useRef(`${ayah.surah.number}:${ayah.numberInSurah}`);
+  const longPressBind = useLongPress(
+    (e) => {
+      setContextShow(true);
+      const touch = e.touches[0];
+      setContextPosition(contextPositionSet(touch?.pageX, touch?.pageY));
+    },
+    { detect: "touch" }
+  );
 
+  // selectors
   const ayahTiming = useSelector((state) =>
     getAyahTimingById(state, ayah.numberInSurah)
   );
   const playState = useSelector(getCurrentPlayState);
-  const ayahRef = useRef();
+  const isFocused = useSelector((state) =>
+    checkFocusedAyah(state, ayahKey.current)
+  );
+  const currentReciter = useSelector(getCurrentReciterId);
+  const currentSorah = useSelector(getCurrentSorah);
 
+  // others
+  const ayahRef = useRef();
   const dispatch = useDispatch();
   const navigator = useNavigate();
+  const basmalahRgX = /بِسۡمِ ٱللَّهِ ٱلرَّحۡمَـٰنِ ٱلرَّحِیمِ/g;
+  const contextPositionSet = useContextPosition();
 
+  // handlers
   const showContextMenu = (e) => {
     e.preventDefault();
     setContextShow(true);
-    const right = window.innerWidth - e.pageX + "px";
-    const left = window.innerWidth - Number.parseFloat(right) + "px";
-    const top = e.pageY + "px";
-    if (Number.parseFloat(right) < Number.parseFloat(left))
-      setContextPosition({ right, top });
-    else setContextPosition({ left, top });
+    setContextPosition(contextPositionSet(e.pageX, e.pageY));
   };
+
+  const basmalahCheck = (ayah) => {
+    return ayah.numberInSurah === 1 && Boolean(ayah.text.match(basmalahRgX));
+  };
+  const basmalah = (
+    <span className="basmalah">بِسۡمِ ٱللَّهِ ٱلرَّحۡمَـٰنِ ٱلرَّحِیمِ</span>
+  );
 
   const options = [
     {
       text: page === "telawa" ? "تفسير" : "تلاوة",
       handler() {
         page === "telawa" ? navigator("/tafsir") : navigator("/");
+        dispatch(changeFocus(ayahKey.current));
+        setContextShow(false);
       },
     },
     {
@@ -55,59 +86,76 @@ const Verse = ({ ayah, active, page }) => {
           await dispatch(changeCurrentTime(ayahTiming.start_time));
           dispatch(changePlayState(true));
         }
+        setContextShow(false);
       },
+      disabled: +currentReciter < 0 || +ayah.surah.number !== +currentSorah,
     },
     {
       text: "حفظ التقدم",
       handler() {
-        localStorage.setItem(
-          `${page}Saved`,
-          JSON.stringify({ surah: ayah.surah.number, ayah: ayah.numberInSurah })
+        const changeSavedAyah =
+          page === "telawa" ? changeTelawaSavedAyah : changeTafsirSavedAyah;
+        dispatch(
+          changeSavedAyah({
+            surah: ayah.surah.number,
+            ayah: ayah.numberInSurah,
+            page: ayah.page,
+          })
         );
+        setContextShow(false);
       },
     },
   ];
 
+  // effects
+  // show and hide context menu
   useEffect(() => {
     const hideContextMenuOnBlur = (e) => {
       if (contextShow) {
-        if (!e.target.closest(`.verse-text[data-id='${ayah.numberInSurah}']`)) {
+        if (
+          !e.target.closest(`.verse-text[data-id='${ayah.number}']`) &&
+          !e.target.closest(".context-menu")
+        ) {
           setContextShow(false);
         }
       }
     };
-    ["click", "contextmenu"].forEach((event) => {
+    ["click", "contextmenu", "touchstart"].forEach((event) => {
       document.addEventListener(event, hideContextMenuOnBlur);
     });
     return () => {
-      ["click", "contextmenu"].forEach((event) => {
+      ["click", "contextmenu", "touchstart"].forEach((event) => {
         document.removeEventListener(event, hideContextMenuOnBlur);
       });
     };
-  }, [ayah.numberInSurah, contextShow]);
+  }, [ayah.number, contextShow]);
 
+  // scroll into active reciting ayah
   useEffect(() => {
-    if (active) {
+    if ((activeReciting && playState) || isFocused) {
       ayahRef.current.scrollIntoView();
     }
-  }, [active]);
+  }, [activeReciting, playState, isFocused]);
 
-  const basmalahRgX = /بِسۡمِ ٱللَّهِ ٱلرَّحۡمَـٰنِ ٱلرَّحِیمِ/g;
-  const basmalahCheck = (ayah) => {
-    return ayah.numberInSurah === 1 && Boolean(ayah.text.match(basmalahRgX));
-  };
-  const basmalah = (
-    <span className="basmalah">بِسۡمِ ٱللَّهِ ٱلرَّحۡمَـٰنِ ٱلرَّحِیمِ</span>
-  );
-
+  // clearFocus
+  useEffect(() => {
+    if (isFocused) {
+      window.setTimeout(() => {
+        dispatch(changeFocus(null));
+      }, 2000);
+    }
+  }, [isFocused]);
   return (
     <>
       {basmalahCheck(ayah) && basmalah}
       <div
-        className={`verse-text ${(active || contextShow) && "active"}`}
+        className={`verse-text ${(activeReciting || contextShow) && "active"} ${
+          activeReading && "active-reading"
+        } ${isFocused && "focused"}`}
         onContextMenu={showContextMenu}
-        data-id={ayah.numberInSurah}
+        data-id={ayah.number}
         ref={ayahRef}
+        {...longPressBind()}
       >
         {basmalahCheck(ayah) ? (
           <AyahText

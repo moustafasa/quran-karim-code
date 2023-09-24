@@ -1,4 +1,4 @@
-import React, { useReducer, useState } from "react";
+import React, { useState } from "react";
 import "./Pagination.scss";
 import { FaAngleLeft } from "react-icons/fa";
 
@@ -8,16 +8,22 @@ const Pagination = ({
   setCurrentPage,
   startPage = 0,
 }) => {
+  // states
   const [inputPage, setInputPage] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
 
+  // handlers
+  // go to next page
   const nextHandler = () => {
     if (currentPage < pagesNumber) setCurrentPage(currentPage + 1);
   };
+
+  // go to previous page
   const previousHandler = () => {
     if (currentPage > 0) setCurrentPage(currentPage - 1);
   };
 
+  // validate input
   const validateInput = (e) => {
     if (/\d/g.test(e.target.value)) {
       setInputPage(e.target.value);
@@ -26,6 +32,7 @@ const Pagination = ({
     }
   };
 
+  // go to page with number typed in input
   const goHandler = () => {
     if (+inputPage >= 0 && +inputPage <= pagesNumber) {
       setCurrentPage(+inputPage);
@@ -35,6 +42,7 @@ const Pagination = ({
     }
     setInputPage("");
   };
+
   return (
     <div className="pagination">
       <div className="btns">

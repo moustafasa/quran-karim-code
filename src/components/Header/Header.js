@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import "./Header.scss";
 import logo from "../../imgs/logo.jpeg";
@@ -7,11 +7,13 @@ import { useSelector } from "react-redux";
 import { getQuery } from "../../rtk/slices/searchSlice";
 
 const Header = () => {
+  // variables
   const query = useSelector(getQuery);
   const navigator = useNavigate();
   const location = useLocation();
   const lastPath = useRef();
 
+  // handlers
   const searchHanlder = (e) => {
     if (e.target.value !== "" && e.target.value !== " ") {
       if (!/search/g.test(location.pathname)) {

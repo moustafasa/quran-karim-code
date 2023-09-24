@@ -12,6 +12,14 @@ import "./ContextMenu.scss";
 //   else setContextPosition({ left, top });
 // };
 
+/*
+  options=[{
+  text:<String>,
+  handler:<Function>,
+  disabled:<Boolean>
+  }]
+*/
+
 const ContextMenu = ({ options = [], position }) => {
   return (
     <ul className="context-menu" style={position}>

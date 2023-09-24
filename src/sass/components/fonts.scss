@@ -1,11 +1,37 @@
-@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;700&display=swap");
+@use "../helpers/mixins" as *;
+
+// @import url("https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;700&display=swap");
+
+// @font-face {
+//   font-family: "Amiri Quran Colored Regular";
+//   font-style: normal;
+//   font-weight: normal;
+//   src: local("Amiri Quran Colored Regular"),
+//     url("../../assets/fonts/AmiriQuranColored-Regular.woff") format("woff");
+// }
 
 @font-face {
   font-family: "Amiri Quran Colored Regular";
   font-style: normal;
   font-weight: normal;
   src: local("Amiri Quran Colored Regular"),
-    url("../../assets/fonts/AmiriQuranColored-Regular.woff") format("woff");
+    url("../../assets/fonts/AmiriQuranColored-Regular.woff") format("woff"),
+    url("../../assets/fonts/AmiriQuranColored-Regular.woff2") format("woff2"),
+    url("../../assets/fonts/AmiriQuranColored-Regular.otf") format("opentype"),
+    url("../../assets/fonts/AmiriQuranColored-Regular.ttf") format("truetype");
+}
+
+@include medias("small mobile") {
+  @font-face {
+    font-family: "Amiri Quran Colored Regular";
+    font-style: normal;
+    font-weight: normal;
+    src: local("Amiri Quran Colored Regular"),
+      url("../../assets/fonts/AmiriQuranColored-Regular.otf") format("opentype"),
+      url("../../assets/fonts/AmiriQuranColored-Regular.woff2") format("woff2"),
+      url("../../assets/fonts/AmiriQuranColored-Regular.woff") format("woff"),
+      url("../../assets/fonts/AmiriQuranColored-Regular.ttf") format("truetype");
+  }
 }
 
 @import url("https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;500;600;700&display=swap");

@@ -1,0 +1,37 @@
+@use "../variables/colors" as *;
+@use "./mixins" as *;
+
+@mixin range-parts($part) {
+  @if ($part== "track") {
+    height: 10px;
+    border-radius: 5px;
+    background-color: $blue-1-color;
+    @include medias("mobile") {
+      height: 7px;
+    }
+  } @else if($part== "thumb") {
+    position: relative;
+    @include one-value-more-properties(18px, width, height);
+    // margin-top = (track height in pixels / 2) - (thumb height in pixels /2)
+    margin-top: -4px;
+    border: 2px solid black;
+    border-radius: 7px;
+    box-shadow: 0 0 10px $blue-3-color;
+    background-color: $blue-2-color;
+    cursor: pointer;
+    z-index: 3;
+    @include medias("mobile") {
+      @include one-value-more-properties(15px, width, height);
+      margin-top: calc((7px / 2) - (15px / 2));
+      border-radius: 5px;
+    }
+  } @else if($part== "progress") {
+    height: 10px;
+    background-color: $blue-2-color;
+    border-radius: 5px;
+    z-index: 2;
+    @include medias("mobile") {
+      height: 7px;
+    }
+  }
+}

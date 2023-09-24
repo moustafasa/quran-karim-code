@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import SelectBox from "../../basic-components/SelectBox/SelectBox";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -9,14 +9,10 @@ import {
 } from "../../rtk/slices/tafsirSlice";
 
 const TafsirController = () => {
+  // selectors and dispatch
   const dispatch = useDispatch();
   const tafasir = useSelector(getTafsirTypes);
-
-  // select value
   const currentTafsir = useSelector(getCurrentTafsir);
-  const changeTafsirValue = (taf) => {
-    dispatch(changeTafsir(taf));
-  };
 
   // options
   const options = [
@@ -26,6 +22,12 @@ const TafsirController = () => {
     }),
   ];
 
+  // handlers
+  const changeTafsirValue = (taf) => {
+    dispatch(changeTafsir(taf));
+  };
+
+  // effects
   useEffect(() => {
     dispatch(fetchTafsirTypes());
   }, []);

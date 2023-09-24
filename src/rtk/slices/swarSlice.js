@@ -1,9 +1,13 @@
-import { createAsyncThunk, createSlice, current } from "@reduxjs/toolkit";
+import {
+  createAsyncThunk,
+  createSelector,
+  createSlice,
+} from "@reduxjs/toolkit";
 import { mp3quranApi, alquranCloudApi } from "../urls";
 import axios from "axios";
 
+// async thunks
 export const fetchSwar = createAsyncThunk("swar/fetchSwar", async () => {
-  console.log("doen");
   const res = await axios(`${mp3quranApi}/suwar`);
   return res.data.suwar;
 });
@@ -22,38 +26,18 @@ export const changePageByAyah = createAsyncThunk(
   }
 );
 
-const initialState = {
-  swar: [],
-  currentPage: 0,
-  currentSorah: 0,
-};
-const swarSlice = createSlice({
-  name: "swar",
-  initialState,
-  reducers: {
-    choosePage(state, action) {
-      state.currentPage = action.payload;
-    },
-    chooseSorah(state, action) {
-      state.currentSorah = action.payload;
-    },
-  },
-  extraReducers: (builder) => {
-    builder.addCase(fetchSwar.fulfilled, (state, action) => {
-      state.swar = action.payload;
-    });
-  },
-});
-
+// thunks
 export const changePage = (page) => (dispatch, getState) => {
   dispatch(choosePage(page));
 
   if (+page !== 0) {
     const swar = getAllSwar(getState());
-    const currentSorah = swar.filter(
+    const currentSurah = getCurrentSorah(getState());
+    const pageSwar = swar.filter(
       (sorah) => sorah.start_page <= page && sorah.end_page >= page
-    )[0];
-    dispatch(chooseSorah(currentSorah?.id));
+    );
+    if (pageSwar.findIndex((surah) => +surah.id === +currentSurah) < 0)
+      dispatch(chooseSorah(pageSwar[0]?.id));
   } else {
     dispatch(chooseSorah(0));
   }
@@ -69,11 +53,61 @@ export const changeSorah = (sid) => (dispatch, getState) => {
     dispatch(choosePage(0));
   }
 };
+
+const initialState = {
+  swar: [],
+  currentPage: 0,
+  currentSorah: 0,
+  focus: null,
+  status: "idle",
+  error: null,
+};
+const swarSlice = createSlice({
+  name: "swar",
+  initialState,
+  reducers: {
+    choosePage(state, action) {
+      state.currentPage = action.payload;
+    },
+    chooseSorah(state, action) {
+      state.currentSorah = action.payload;
+    },
+    changeFocus(state, action) {
+      state.focus = action.payload;
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchSwar.pending, (state, action) => {
+        state.status = "loading";
+      })
+      .addCase(fetchSwar.fulfilled, (state, action) => {
+        state.swar = action.payload;
+        state.status = "success";
+      })
+      .addCase(fetchSwar.rejected, (state, action) => {
+        state.status = "error";
+        state.error = action.error.message;
+      });
+  },
+});
+
+// selectors
 export const getAllSwar = (state) => state.swar.swar;
-export const getSurahById = (state, id) =>
-  state.swar.swar.find((sorah) => sorah.id === id);
+export const getSurahById = createSelector(
+  [getAllSwar, (state, id) => id],
+  (swar, id) => swar.find((sorah) => +sorah.id === +id)
+);
+
 export const getCurrentPage = (state) => state.swar.currentPage;
 export const getCurrentSorah = (state) => state.swar.currentSorah;
+export const checkFocusedAyah = (state, ayah) => state.swar.focus === ayah;
+export const getSwarStatus = (state) => state.swar.status;
+export const getSwarError = (state) => state.swar.error;
 
-export default swarSlice.reducer;
+// actions
+export const { changeFocus } = swarSlice.actions;
 const { choosePage, chooseSorah } = swarSlice.actions;
+
+// reducer
+export default swarSlice.reducer;

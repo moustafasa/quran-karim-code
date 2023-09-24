@@ -9,6 +9,12 @@
   scroll-margin-top: 100px;
   cursor: pointer;
   transition: 0.5s;
+  user-select: none;
+  &.focused {
+    animation: focus 2s linear 1;
+  }
+  @include oneValue("&.focused", animation, (focus 2s linear 1));
+  @include oneValue("&.active-reading", color, $green-3-color);
   @include oneValue("&:hover,&.active", color, $blue-2-color);
   @include oneValue("&.saved", color, $green-3-color);
 }

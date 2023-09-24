@@ -1,11 +1,12 @@
-import React from "react";
+import React, { memo } from "react";
 import { FaPause, FaPlay } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import { getCurrentPlayState } from "../../../rtk/slices/recitingSlice";
+import "./PlayControl.scss";
 
 const PlayControl = ({ playHandler, canPlay }) => {
   const playState = useSelector(getCurrentPlayState);
-  console.log(canPlay);
+
   return (
     <button
       type="button"
@@ -18,4 +19,4 @@ const PlayControl = ({ playHandler, canPlay }) => {
   );
 };
 
-export default PlayControl;
+export default memo(PlayControl);

@@ -1,7 +1,12 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import {
+  createAsyncThunk,
+  createSelector,
+  createSlice,
+} from "@reduxjs/toolkit";
 import axios from "axios";
 import { mp3quranApi } from "../../rtk/urls";
 
+// async thunks
 export const fetchReciters = createAsyncThunk(
   "reciting/fetchReciters",
   async ({ rType, sorah }) => {
@@ -17,17 +22,36 @@ export const fetchReciters = createAsyncThunk(
         reciters = res.data.reciters;
       }
     }
-    return [
-      ...reciters.map((reciter) => {
-        return {
+    const exclusion = {
+      21: 21,
+      35: 35,
+      42: 42,
+      45: 45,
+      49: 49,
+      52: 52,
+      105: 105,
+      115: 115,
+      218: 218,
+      222: 222,
+    };
+    let filteredReciters = [];
+
+    for (let i = 0; i < reciters.length; i++) {
+      let reciter = reciters[i];
+      if (!exclusion[reciter.id]) {
+        filteredReciters.push({
           id: reciter.id,
           name: reciter.name,
           server: reciter.moshaf
             ? reciter.moshaf[0].server
             : reciter.folder_url,
-        };
-      }),
-    ];
+        });
+      } else {
+        continue;
+      }
+    }
+
+    return filteredReciters;
   }
 );
 
@@ -43,9 +67,9 @@ export const fetchAyatTiming = createAsyncThunk(
 
 const initialState = {
   recitingType: "",
-  reciters: [],
-  ayatTiming: [],
-  currentReciter: "",
+  reciters: { entities: [], status: "idle", error: null },
+  ayatTiming: { entities: [], status: "idle", error: null },
+  currentReciter: -1,
   currentTime: 0,
   currentAyah: 0,
   playState: false,
@@ -56,8 +80,8 @@ const recitingSlice = createSlice({
   reducers: {
     changeRecitingType(state, action) {
       state.recitingType = action.payload;
-      state.currentReciter = "";
-      state.ayatTiming = [];
+      state.currentReciter = -1;
+      state.ayatTiming.entities = [];
       state.currentAyah = 0;
     },
     changeCurrentReciter(state, action) {
@@ -74,37 +98,66 @@ const recitingSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(fetchReciters.fulfilled, (state, action) => {
-      state.reciters = action.payload;
-    });
-    builder.addCase(fetchAyatTiming.fulfilled, (state, action) => {
-      state.ayatTiming = action.payload.map((ayah) => {
-        ayah.start_time /= 1000;
-        ayah.end_time /= 1000;
-        return ayah;
+    builder
+      .addCase(fetchReciters.fulfilled, (state, action) => {
+        state.reciters.entities = action.payload;
+        state.reciters.status = "idle";
+      })
+      .addCase(fetchReciters.pending, (state, action) => {
+        state.reciters.status = "loading";
+      })
+      .addCase(fetchReciters.rejected, (state, action) => {
+        state.reciters.status = "idle";
+        state.reciters.error = action.error.message;
       });
-    });
+    builder
+      .addCase(fetchAyatTiming.fulfilled, (state, action) => {
+        state.ayatTiming.entities = action.payload.map((ayah) => {
+          ayah.start_time /= 1000;
+          ayah.end_time /= 1000;
+          return ayah;
+        });
+        state.ayatTiming.status = "idle";
+      })
+      .addCase(fetchAyatTiming.pending, (state, action) => {
+        state.ayatTiming.status = "loading";
+      })
+      .addCase(fetchAyatTiming.rejected, (state, action) => {
+        state.ayatTiming.status = "idle";
+        state.ayatTiming.error = action.error.message;
+      });
   },
 });
 
+// selectors
+export const getRecitersList = (state) => state.reciting.reciters.entities;
 export const getRecitingType = (state) => state.reciting.recitingType;
-export const getRecitersList = (state) => state.reciting.reciters;
 export const getCurrentReciterId = (state) => state.reciting.currentReciter;
-export const getCurrentReciter = (state, rId) =>
-  state.reciting.reciters.filter((reciter) => reciter.id === +rId)[0];
+export const getAllAyahTiming = (state) => state.reciting.ayatTiming.entities;
+export const getCurrentReciter = createSelector(
+  [getRecitersList, (state, rId) => rId],
+  (reciters, rId) => reciters.filter((reciter) => reciter.id === +rId)[0]
+);
+export const getAyahTimingById = createSelector(
+  [getAllAyahTiming, (state, id) => id],
+  (ayatTiming, id) => ayatTiming.filter((ayah) => +ayah.ayah === +id)[0]
+);
 export const getCurrentTime = (state) => state.reciting.currentTime;
-export const getAyahTimingById = (state, id) =>
-  state.reciting.ayatTiming.filter((ayah) => +ayah.ayah === +id)[0];
-export const getAllAyahTiming = (state) => state.reciting.ayatTiming;
-export const getCurrentPlayState = (state, id) => state.reciting.playState;
+export const getCurrentPlayState = (state) => state.reciting.playState;
 export const getCurrentRecitingAyah = (state) => state.reciting.currentAyah;
+export const getAyatTimingStatus = (state) => state.reciting.ayatTiming.status;
+export const getAyatTimingError = (state) => state.reciting.ayatTiming.error;
+export const getRecitersStatus = (state) => state.reciting.reciters.status;
+export const getRecitersError = (state) => state.reciting.reciters.error;
 
-export default recitingSlice.reducer;
+// action creators
 export const {
   changeRecitingType,
   changeCurrentReciter,
   changeCurrentTime,
   changePlayState,
 } = recitingSlice.actions;
-
 export const { changeCurrentRecitingAyah } = recitingSlice.actions;
+
+// reducer
+export default recitingSlice.reducer;

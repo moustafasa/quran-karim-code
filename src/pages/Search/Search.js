@@ -3,11 +3,9 @@ import { useParams } from "react-router-dom";
 import MainHeading from "../../basic-components/MainHeading/MainHeading";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  changeSearchPage,
   fetchResults,
   getAllResults,
   getCurrentSearchPage,
-  getTotalResults,
   getTotalSearchPages,
 } from "../../rtk/slices/searchSlice";
 import Pagination from "../../basic-components/Pagination/Pagination";
@@ -22,11 +20,11 @@ const Search = () => {
   const currentPage = useSelector(getCurrentSearchPage);
 
   const setCurrentPage = (page) => {
-    dispatch(changeSearchPage(page));
+    dispatch(fetchResults({ q, page: page }));
   };
 
   useEffect(() => {
-    if (q) dispatch(fetchResults(q));
+    if (q) dispatch(fetchResults({ q, page: 1 }));
   }, [q, dispatch]);
 
   return (

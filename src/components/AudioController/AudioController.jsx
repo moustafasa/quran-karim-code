@@ -1,21 +1,32 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useSelector } from "react-redux";
+import React, { useCallback, useEffect } from "react";
+import { shallowEqual, useSelector } from "react-redux";
 import {
   getCurrentReciter,
   getCurrentReciterId,
+  getRecitingType,
 } from "../../rtk/slices/recitingSlice";
 import Audio from "../../basic-components/Audio/Audio";
 import { getCurrentSorah } from "../../rtk/slices/swarSlice";
 import "./AudioController.scss";
-import axios from "axios";
 
 const AudioController = () => {
-  const currentSorah = useSelector(getCurrentSorah);
-  const rId = useSelector(getCurrentReciterId);
+  // selectors
+  const currentSorah = useSelector(getCurrentSorah, shallowEqual);
+  const rId = useSelector(getCurrentReciterId, shallowEqual);
   const currentReciter = useSelector((state) => getCurrentReciter(state, rId));
-  const src = currentReciter
-    ? currentReciter.server + currentSorah.toString().padStart(3, "0") + ".mp3"
-    : "";
+
+  const getSrc = useCallback(
+    () =>
+      currentReciter
+        ? currentReciter.server +
+          currentSorah.toString().padStart(3, "0") +
+          ".mp3"
+        : "",
+    [currentSorah, currentReciter]
+  );
+
+  // variables
+  const src = getSrc();
 
   return (
     <div className="audio-controller">

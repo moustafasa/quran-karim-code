@@ -1,0 +1,45 @@
+@use "../../../sass/helpers/localMixins" as *;
+@use "../../../sass/helpers/mixins" as *;
+@use "../../../sass/variables/colors" as *;
+@use "../../../sass/variables/others" as *;
+@use "sass:map";
+
+.display-track {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  @include medias("mobile") {
+    gap: 5px;
+  }
+  @include oneValue("span", font-size, 1rem);
+
+  flex: 1;
+  position: relative;
+  [type="range"] {
+    display: block;
+    width: 100%;
+    @each $browser, $prefixes in $all {
+      &::#{map.get($prefixes,'thumb')} {
+        scale: 0;
+        transition: 0.1s;
+      }
+      &:hover,
+      &:focus {
+        &::#{map.get($prefixes,'thumb')} {
+          scale: 1;
+        }
+      }
+    }
+    &::after {
+      content: "";
+      position: absolute;
+      width: var(--downloaded, 0);
+      height: 100%;
+      background-color: $blue-3-color;
+      opacity: 0.2;
+      border-radius: 5px;
+    }
+    @include oneValue("&:focus:after", opacity, 0.4);
+  }
+}

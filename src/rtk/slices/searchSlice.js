@@ -1,6 +1,15 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-import { quranApi, alquranCloudApi } from "../urls";
+import { quranApi } from "../urls";
+
+// async thunks
+export const fetchResults = createAsyncThunk(
+  "search/fetchResults",
+  async ({ q, page }) => {
+    const res = await axios(`${quranApi}/search?q=${q}&page=${page}`);
+    return res.data.search;
+  }
+);
 
 const initialState = {
   results: [],
@@ -8,63 +17,39 @@ const initialState = {
   current_page: 0,
   total_results: 0,
   query: "",
+  status: "idle",
+  error: null,
 };
-
-export const fetchResults = createAsyncThunk(
-  "search/fetchResults",
-  async (query) => {
-    const res = await axios(`${quranApi}/search?q=${query}`);
-    return res.data.search;
-  }
-);
-
-export const changeSearchPage = createAsyncThunk(
-  "search/changeSearchPage",
-  async (page, { getState }) => {
-    const query = getQuery(getState());
-    const res = await axios(`${quranApi}/search?q=${query}&page=${page}`);
-    return res.data.search;
-  }
-);
-
-export const fetchSearchedAyah = createAsyncThunk(
-  "search/fetchSearchedAyah",
-  async (key) => {
-    const res = await axios(`${alquranCloudApi}/ayah/${key}`);
-    return {
-      page: res.data.data.page,
-      numberInSurah: res.data.data.numberInSurah,
-    };
-  }
-);
-
 const searchSlice = createSlice({
   name: "search",
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(fetchResults.fulfilled, (state, action) => {
-      return {
-        ...state,
-        ...action.payload,
-      };
-    });
-    builder.addCase(changeSearchPage.fulfilled, (state, action) => {
-      return {
-        ...state,
-        ...action.payload,
-      };
-    });
+    builder
+      .addCase(fetchResults.fulfilled, (state, action) => {
+        state.status = "idle";
+        return {
+          ...state,
+          ...action.payload,
+        };
+      })
+      .addCase(fetchResults.pending, (state, action) => {
+        state.status = "idle";
+      })
+      .addCase(fetchResults.rejected, (state, action) => {
+        state.status = "idle";
+        state.error = action.error.message;
+      });
   },
 });
 
-export default searchSlice.reducer;
-
+// selector
 export const getAllResults = (state) => state.search.results;
-export const getResultsWithFilters = (state, sorah) =>
-  state.search.results.filter(
-    (verse) => +verse.verse_key.split(":")[0] === +sorah
-  );
 export const getTotalSearchPages = (state) => state.search.total_pages;
 export const getCurrentSearchPage = (state) => state.search.current_page;
 export const getQuery = (state) => state.search.query;
+export const getSearchStatus = (state) => state.search.status;
+export const getSearchError = (state) => state.search.error;
+
+// reducer
+export default searchSlice.reducer;

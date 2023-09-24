@@ -8,25 +8,27 @@ import {
 } from "../../rtk/slices/swarSlice";
 
 const SwarController = () => {
-  const [selectValue, setSelectValue] = useState(0);
+  // selectors and dispatch
   const currentSorah = useSelector(getCurrentSorah);
+  const swar = useSelector(getAllSwar);
   const dispatch = useDispatch();
 
-  const chooseSorah = (sorah) => {
-    dispatch(changeSorah(sorah));
-  };
-
-  const swar = useSelector(getAllSwar);
   const options = [
     { value: 0, text: "الفهرس" },
     ...swar.map((sorah) => {
       return { value: sorah.id, text: sorah.name };
     }),
   ];
+
+  // handlers
+  const chooseSorah = (sorah) => {
+    dispatch(changeSorah(sorah));
+  };
+
   return (
     <div className="swar-controller controller">
       <span>السورة</span>
-      <SelectBox valueState={[currentSorah, chooseSorah]} options={options} />
+      <SelectBox valueState={[+currentSorah, chooseSorah]} options={options} />
     </div>
   );
 };

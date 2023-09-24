@@ -5,11 +5,12 @@ import { Outlet, useLocation } from "react-router-dom";
 import Pagination from "../../basic-components/Pagination/Pagination";
 import { useDispatch, useSelector } from "react-redux";
 import { changePage, getCurrentPage } from "../../rtk/slices/swarSlice";
-import { fetchAyahs } from "../../rtk/slices/telawaSlice";
+import { fetchAyahs, getTelawaStatus } from "../../rtk/slices/telawaSlice";
 import "./Layout.scss";
 
 const Layout = () => {
   const currentPage = useSelector(getCurrentPage);
+  const telawaStatus = useSelector(getTelawaStatus);
   const location = useLocation();
 
   const dispatch = useDispatch();
@@ -18,7 +19,8 @@ const Layout = () => {
   };
 
   useEffect(() => {
-    if (currentPage > 0) dispatch(fetchAyahs(currentPage));
+    if (currentPage > 0 && telawaStatus === "idle")
+      dispatch(fetchAyahs(currentPage));
   }, [currentPage, dispatch]);
 
   return (

@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useEffect, useRef, useState } from "react";
+import React, { memo, useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   changeCurrentTime,
@@ -6,10 +6,17 @@ import {
   getCurrentTime,
 } from "../../../rtk/slices/recitingSlice";
 
-const DisplayTrack = ({ audioRef, duration }) => {
-  const dispatch = useDispatch();
+import "./DisplayTrack.scss";
+import useConvertTimeForm from "../../../customHooks/useConvertTimeForm";
+
+const DisplayTrack = ({ audioRef, duration, progressEnd, canPlay }) => {
+  // selectors
   const playState = useSelector(getCurrentPlayState);
   const nowTime = useSelector(getCurrentTime);
+  const timeConverter = useConvertTimeForm();
+  const dispatch = useDispatch();
+
+  // handlers
   const setNowTime = useCallback(
     (time) => dispatch(changeCurrentTime(time)),
     [dispatch]
@@ -23,37 +30,26 @@ const DisplayTrack = ({ audioRef, duration }) => {
     }
   };
 
+  // effects
+  // seeking audio (change audio current time)
   useEffect(() => {
     if (!playState && audioRef.current) {
       audioRef.current.currentTime = nowTime;
     }
   }, [nowTime, audioRef, playState]);
 
+  // change playState
   useEffect(() => {
-    if (playState) {
+    if (playState && canPlay) {
       audioRef.current?.play();
     } else {
       audioRef.current?.pause();
     }
-  }, [playState, audioRef]);
-
-  const convertTime = (time) => {
-    const hours = Math.floor(time / (60 * 60))
-      .toString()
-      .padStart(2, "0");
-
-    const minutes = Math.floor((time % (60 * 60)) / 60)
-      .toString()
-      .padStart(2, "0");
-    const seconds = Math.floor((time % (60 * 60)) % 60)
-      .toString()
-      .padStart(2, "0");
-    return `${hours}:${minutes}:${seconds}`;
-  };
+  }, [playState, audioRef, canPlay]);
 
   return (
     <div className="display-track">
-      <span>{convertTime(nowTime)}</span>
+      <span>{timeConverter(nowTime)}</span>
       <input
         type="range"
         max={duration}
@@ -61,9 +57,10 @@ const DisplayTrack = ({ audioRef, duration }) => {
         onChange={sliderHandler}
         style={{
           "--progress": `${Math.min((nowTime / duration) * 100, 100)}%`,
+          "--downloaded": `${Math.min((progressEnd / duration) * 100, 100)}%`,
         }}
       />
-      <span>{convertTime(duration)}</span>
+      <span>{timeConverter(duration)}</span>
     </div>
   );
 };

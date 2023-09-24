@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import SelectBox from "../SelectBox/SelectBox";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -7,13 +7,7 @@ import {
 } from "../../rtk/slices/recitingSlice";
 
 const RecitingType = () => {
-  const dispatch = useDispatch();
-
-  const recitingValue = useSelector(getRecitingType);
-  const chooseRecitingType = (type) => {
-    dispatch(changeRecitingType(type));
-  };
-
+  // variables
   const options = [
     {
       value: "",
@@ -25,6 +19,17 @@ const RecitingType = () => {
     },
     { value: "translation", text: "قراءة بدون متابعة" },
   ];
+
+  // dispatch function
+  const dispatch = useDispatch();
+
+  // selectors
+  const recitingValue = useSelector(getRecitingType);
+
+  // handlers
+  const chooseRecitingType = (type) => {
+    dispatch(changeRecitingType(type));
+  };
 
   return (
     <div className="controller reciting-type-controller">

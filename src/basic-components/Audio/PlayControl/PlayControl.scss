@@ -1,0 +1,20 @@
+@use "../../../sass/helpers/mixins" as *;
+@use "../../../sass/variables/colors" as *;
+@use "../../../sass/variables/others" as *;
+
+.audio-btn {
+  @include centerbyflex(null);
+  padding: 5px;
+  border: none;
+  background-color: transparent;
+  color: $blue-3-color;
+  cursor: pointer;
+  outline: none;
+  &:disabled {
+    color: $black-1-color;
+    opacity: 0.5;
+    pointer-events: none;
+  }
+  @include oneValue("&.play-pause-btn", font-size, 0.8rem);
+  @include oneValue("&.volume-btn", font-size, 1rem);
+}

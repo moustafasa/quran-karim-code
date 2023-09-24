@@ -17,44 +17,54 @@
     }
   }
   .info {
-    @include centerbyflex(null);
-    gap: 10px 50px;
+    @include centerbyflex("vertical");
+    justify-content: space-evenly;
+    row-gap: 10px;
     flex-wrap: wrap;
     border-top: 2px dashed $blue-2-color;
     padding-top: 20px;
     font-size: 1rem;
-    li.page {
-      @include centerbyflex("vertical");
-      gap: 10px;
-      .page-label {
-        font: {
-          size: 1.1rem;
-          weight: bold;
+    ul.data {
+      display: flex;
+      gap: 10px 50px;
+      flex-wrap: wrap;
+      justify-content: center;
+      li {
+        @include centerbyflex("vertical");
+        gap: 10px;
+        .page-label {
+          font: {
+            size: 1.1rem;
+            weight: bold;
+          }
         }
-      }
-      .page-num {
-        color: $green-3-color;
-        font-size: 1.3rem;
+        .page-num {
+          color: $green-3-color;
+          font-size: 1.3rem;
+        }
       }
     }
-    li.saved-verse-btn {
-      button {
-        display: block;
-        box-shadow: $blue-3-6-shadow;
-        background-color: $blue-3-color;
-        border: none;
-        border-radius: 5px;
-        outline: none;
-        padding: 10px 15px;
-        font-size: 1.2rem;
-        color: white;
-        cursor: pointer;
-        transition: 0.5s;
-        &:hover {
-          background-color: $blue-4-color;
-          color: $yellow-color;
-          box-shadow: $blue-3-8-shadow;
-        }
+    button.saved-verse-btn {
+      display: block;
+      box-shadow: $blue-3-6-shadow;
+      background-color: $blue-3-color;
+      border: none;
+      border-radius: 5px;
+      outline: none;
+      padding: 10px 15px;
+      font-size: 1.2rem;
+      color: white;
+      cursor: pointer;
+      transition: 0.5s;
+      &:hover {
+        background-color: $blue-4-color;
+        color: $yellow-color;
+        box-shadow: $blue-3-8-shadow;
+      }
+      &:disabled {
+        background-color: $black-1-color;
+        opacity: 0.5;
+        pointer-events: none;
       }
     }
   }

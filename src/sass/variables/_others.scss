@@ -21,3 +21,26 @@ $blue-3-8-shadow: 0 0 20px
     $color: $blue-3-color,
     $alpha: 0.8,
   );
+
+// audio prefixes
+$chrome: (
+  track: -webkit-slider-runnable-track,
+  thumb: -webkit-slider-thumb,
+);
+
+$firefox: (
+  track: -moz-range-track,
+  thumb: -moz-range-thumb,
+  progress: -moz-range-progress,
+);
+
+$ms: (
+  track: -ms-track,
+  thumb: -ms-thumb,
+);
+
+$all: (
+  chrome: $chrome,
+  firefox: $firefox,
+  ms: $ms,
+);

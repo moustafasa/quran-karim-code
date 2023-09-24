@@ -14,26 +14,31 @@ import {
 import { getAyahs } from "../../rtk/slices/telawaSlice";
 
 const Tafsir = () => {
+  // selectors
   const currentPage = useSelector(getCurrentPage);
   const tafsirType = useSelector(getCurrentTafsir);
   const tafsir = useSelector(getTafsirText);
   const sorahText = useSelector(getAyahs);
   const dispatch = useDispatch();
 
+  // effects
   useEffect(() => {
-    if (currentPage > 0 && tafsirType)
-      dispatch(fetchTafsirText({ currentPage, tafsirType }));
+    if (currentPage > 0) dispatch(fetchTafsirText({ currentPage, tafsirType }));
   }, [currentPage, tafsirType, dispatch]);
 
+  // supcomponents
   const tafsirText = () =>
-    tafsir.length > 0
-      ? sorahText.map((ayah) => (
-          <Fragment key={ayah.number}>
-            <SorahName ayah={ayah} />
-            <TafsirVerse ayah={ayah} tafsir={tafsir} />
-          </Fragment>
-        ))
-      : null;
+    tafsir.length > 0 ? (
+      sorahText.map((ayah) => (
+        <Fragment key={ayah.number}>
+          {+ayah.numberInSurah === 1 && <SorahName ayah={ayah} />}
+          <TafsirVerse ayah={ayah} tafsir={tafsir} />
+        </Fragment>
+      ))
+    ) : (
+      <p className="tafsir-msg">من فضلك اختار احد التفاسير من اعلي</p>
+    );
+
   return (
     <div className="tafsir">
       {currentPage === 0 ? <Fehres /> : tafsirText()}
