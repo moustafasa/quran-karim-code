@@ -6,7 +6,7 @@ import Pagination from "../../basic-components/Pagination/Pagination";
 import { useDispatch, useSelector } from "react-redux";
 import { changePage, getCurrentPage } from "../../rtk/slices/swarSlice";
 import { fetchAyahs, getTelawaStatus } from "../../rtk/slices/telawaSlice";
-import "./Layout.scss";
+import sass from "./Layout.module.scss";
 
 const Layout = () => {
   const currentPage = useSelector(getCurrentPage);
@@ -24,13 +24,13 @@ const Layout = () => {
   }, [currentPage, dispatch]);
 
   return (
-    <div className="container">
+    <div className={sass.container + " container"}>
       <MainHeading
         headText={location.pathname === "/tafsir" ? "تفسير" : "تلاوة"}
       />
-      <div className="body">
+      <div className={sass.body}>
         <Properties />
-        <div className="text">
+        <div className={sass.text}>
           <Outlet />
         </div>
       </div>

@@ -6,6 +6,7 @@ import {
   getAllSwar,
   getCurrentSorah,
 } from "../../rtk/slices/swarSlice";
+import Spinner from "../Spinner/Spinner";
 
 const SwarController = () => {
   // selectors and dispatch

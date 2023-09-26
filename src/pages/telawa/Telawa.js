@@ -23,6 +23,8 @@ import {
   getCurrentRecitingAyah,
   getCurrentTime,
 } from "../../rtk/slices/recitingSlice";
+import useSpinnerWithMinTime from "../../customHooks/useSpinnerWithMinTime";
+import Spinner from "../../basic-components/Spinner/Spinner";
 
 const Telawa = () => {
   // selectors
@@ -34,6 +36,8 @@ const Telawa = () => {
   const playState = useSelector(getCurrentPlayState);
   const savedAyah = useSelector(getTelawaSavedAyah);
   const currentSorah = useSelector(getCurrentSorah);
+  const telawaStatus = useSelector(getTelawaStatus);
+  const spinnerShowed = useSpinnerWithMinTime(telawaStatus);
 
   // others
   const dispatch = useDispatch();
@@ -64,28 +68,32 @@ const Telawa = () => {
 
   // subComponent
   const ayahText = () => {
-    return sorahText.map((ayah) => {
-      const active =
-        +currentRecitingAyah === +ayah.numberInSurah &&
-        +currentSorah === +ayah.surah.number &&
-        playState;
+    if (spinnerShowed && !playState) {
+      return <Spinner />;
+    } else {
+      return sorahText.map((ayah) => {
+        const active =
+          +currentRecitingAyah === +ayah.numberInSurah &&
+          +currentSorah === +ayah.surah.number &&
+          playState;
 
-      const activeReading =
-        savedAyah &&
-        savedAyah?.surah === ayah.surah.number &&
-        savedAyah?.ayah === ayah.numberInSurah;
-      return (
-        <Fragment key={ayah.number}>
-          {ayah.numberInSurah === 1 && <SorahName ayah={ayah} />}
-          <Verse
-            ayah={ayah}
-            activeReciting={active}
-            activeReading={activeReading}
-            page={"telawa"}
-          />
-        </Fragment>
-      );
-    });
+        const activeReading =
+          savedAyah &&
+          savedAyah?.surah === ayah.surah.number &&
+          savedAyah?.ayah === ayah.numberInSurah;
+        return (
+          <Fragment key={ayah.number}>
+            {ayah.numberInSurah === 1 && <SorahName ayah={ayah} />}
+            <Verse
+              ayah={ayah}
+              activeReciting={active}
+              activeReading={activeReading}
+              page={"telawa"}
+            />
+          </Fragment>
+        );
+      });
+    }
   };
 
   return (

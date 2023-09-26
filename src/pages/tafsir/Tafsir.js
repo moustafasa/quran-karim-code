@@ -10,8 +10,11 @@ import {
   fetchTafsirText,
   getCurrentTafsir,
   getTafsirText,
+  getTafsirTextStatus,
 } from "../../rtk/slices/tafsirSlice";
 import { getAyahs } from "../../rtk/slices/telawaSlice";
+import useSpinnerWithMinTime from "../../customHooks/useSpinnerWithMinTime";
+import Spinner from "../../basic-components/Spinner/Spinner";
 
 const Tafsir = () => {
   // selectors
@@ -20,15 +23,21 @@ const Tafsir = () => {
   const tafsir = useSelector(getTafsirText);
   const sorahText = useSelector(getAyahs);
   const dispatch = useDispatch();
+  const tafsirStatus = useSelector(getTafsirTextStatus);
+  const spinnerShowed = useSpinnerWithMinTime(tafsirStatus);
 
   // effects
   useEffect(() => {
-    if (currentPage > 0) dispatch(fetchTafsirText({ currentPage, tafsirType }));
+    if (currentPage > 0 && tafsirStatus === "idle")
+      dispatch(fetchTafsirText({ currentPage, tafsirType }));
   }, [currentPage, tafsirType, dispatch]);
 
   // supcomponents
+  console.log(spinnerShowed);
   const tafsirText = () =>
-    tafsir.length > 0 ? (
+    spinnerShowed ? (
+      <Spinner />
+    ) : tafsir.length > 0 ? (
       sorahText.map((ayah) => (
         <Fragment key={ayah.number}>
           {+ayah.numberInSurah === 1 && <SorahName ayah={ayah} />}

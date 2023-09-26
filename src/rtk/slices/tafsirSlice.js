@@ -58,10 +58,11 @@ const tafsirSlice = createSlice({
 
     builder
       .addCase(fetchTafsirText.pending, (state, action) => {
-        state.tafsirText.status = "loading";
+        if (state.currentTafsir !== "") state.tafsirText.status = "loading";
       })
       .addCase(fetchTafsirText.fulfilled, (state, action) => {
         state.tafsirText.entities = action.payload;
+        state.tafsirText.status = "idle";
       })
       .addCase(fetchTafsirText.rejected, (state, action) => {
         state.tafsirText.status = "idle";
@@ -75,8 +76,8 @@ export const getTafsirTypes = (state) => state.tafsir.tafsirTypes.entities;
 export const getCurrentTafsir = (state) => state.tafsir.currentTafsir;
 export const getTafsirText = (state) => state.tafsir.tafsirText.entities;
 export const getTafsirSavedAyah = (state) => state.tafsir.savedAyah;
-export const getTafsirTypesStatus = (state) => state.swar.status;
-export const getTafsirTextError = (state) => state.swar.error;
+export const getTafsirTextStatus = (state) => state.tafsir.tafsirText.status;
+// export const getTafsirTextError = (state) => state.swar.error;
 
 // action creators
 export const { changeTafsir, changeTafsirSavedAyah } = tafsirSlice.actions;

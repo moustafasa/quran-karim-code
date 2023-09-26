@@ -28,13 +28,16 @@ const searchSlice = createSlice({
     builder
       .addCase(fetchResults.fulfilled, (state, action) => {
         state.status = "idle";
-        return {
-          ...state,
-          ...action.payload,
-        };
+        state.results = action.payload.results;
+        state.current_page = action.payload.current_page;
+        if (state.query !== action.payload.query) {
+          state.total_pages = action.payload.total_pages;
+          state.total_results = action.payload.total_results;
+          state.query = action.payload.query;
+        }
       })
       .addCase(fetchResults.pending, (state, action) => {
-        state.status = "idle";
+        state.status = "loading";
       })
       .addCase(fetchResults.rejected, (state, action) => {
         state.status = "idle";

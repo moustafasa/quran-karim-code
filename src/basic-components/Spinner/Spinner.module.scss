@@ -3,10 +3,12 @@
 @use "../../sass/variables/others" as *;
 
 .spinnerCont {
-  height: 100%;
+  width: 100%;
   @include centerbyflex(null);
   flex-direction: column;
-  gap: 5px;
+  padding-block: 50px;
+  gap: 20px;
+  font-family: $main-font;
   .spinner {
     position: relative;
     width: 20px;
@@ -39,7 +41,8 @@
   }
 
   .label {
-    color: red;
+    color: $black-1-color;
+    font-size: 1.2rem;
   }
 }
 

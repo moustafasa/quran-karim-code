@@ -10,50 +10,33 @@ import Spinner from "./basic-components/Spinner/Spinner";
 import sass from "./App.module.scss";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-const Telawa = lazy(() => import("./pages/telawa/Telawa"));
-const Tafsir = lazy(() => import("./pages/tafsir/Tafsir"));
+import useSpinnerWithMinTime from "./customHooks/useSpinnerWithMinTime";
+import Telawa from "./pages/telawa/Telawa";
+import Tafsir from "././pages/tafsir/Tafsir";
 
 function App() {
   const dispatch = useDispatch();
   const swarStatus = useSelector(getSwarStatus);
-  const swarError = useSelector(getSwarError);
+  const spinnerShowed = useSpinnerWithMinTime(swarStatus);
 
   useEffect(() => {
     if (swarStatus === "idle") dispatch(fetchSwar());
   }, [dispatch, swarStatus]);
 
   const content = () => {
-    switch (swarStatus) {
-      case "loading":
-        return <Spinner />;
-      case "success":
-        return (
-          <div className="content">
-            <Routes>
-              <Route path="/*" element={<Layout />}>
-                <Route
-                  path="*"
-                  element={
-                    <Suspense fallback=<Spinner />>
-                      <Telawa />
-                    </Suspense>
-                  }
-                />
-                <Route
-                  path="tafsir"
-                  element={
-                    <Suspense fallback=<Spinner />>
-                      <Tafsir />
-                    </Suspense>
-                  }
-                />
-              </Route>
-              <Route path="/search/:q" element={<Search />} />
-            </Routes>
-          </div>
-        );
-      default:
-        return null;
+    if (spinnerShowed) return <Spinner />;
+    else if (swarStatus === "success") {
+      return (
+        <div className={sass.content}>
+          <Routes>
+            <Route path="/*" element={<Layout />}>
+              <Route path="*" element={<Telawa />} />
+              <Route path="tafsir" element={<Tafsir />} />
+            </Route>
+            <Route path="/search" element={<Search />} />
+          </Routes>
+        </div>
+      );
     }
   };
 
@@ -61,6 +44,10 @@ function App() {
     <div className={sass.App}>
       <Header />
       {content()}
+      {/* <Spinner /> */}
+      {/* <div className="content">
+        <Spinner />
+      </div> */}
       <AudioController />
       <ToastContainer />
     </div>

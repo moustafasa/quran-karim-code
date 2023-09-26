@@ -17,7 +17,7 @@ const AudioController = () => {
 
   const getSrc = useCallback(
     () =>
-      currentReciter
+      currentReciter && +currentSorah !== 0
         ? currentReciter.server +
           currentSorah.toString().padStart(3, "0") +
           ".mp3"

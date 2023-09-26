@@ -84,7 +84,7 @@ const Audio = ({ src }) => {
     if (src) {
       audioRef.current.src = src;
       audioRef.current.type = "audio/mpeg";
-      // audioRef.current.load();
+      audioRef.current.load();
     }
   }, [src]);
 

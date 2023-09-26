@@ -1,5 +1,9 @@
+@use "./sass/helpers/mixins" as *;
 .App {
   min-height: 100vh;
   padding-top: 150px;
   padding-bottom: 50px;
+  @include medias("mobile") {
+    padding-top: 250px;
+  }
 }

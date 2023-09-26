@@ -4,23 +4,18 @@ import "./Fehres.scss";
 import {
   changeSorah,
   getAllSwar,
-  getSwarError,
   getSwarStatus,
 } from "../../rtk/slices/swarSlice";
-import Spinner from "../../basic-components/Spinner/Spinner";
 
 const Fehres = () => {
   // selectors and dispatch
   const swar = useSelector(getAllSwar);
   const swarStatus = useSelector(getSwarStatus);
-  const swarError = useSelector(getSwarError);
   const dispatch = useDispatch();
 
   return (
     <div className="fehres">
-      {swarStatus === "loading" ? (
-        <Spinner />
-      ) : swarStatus === "success" ? (
+      {swarStatus === "success" && (
         <table>
           <thead>
             <tr>
@@ -46,8 +41,6 @@ const Fehres = () => {
             })}
           </tbody>
         </table>
-      ) : (
-        swarStatus === "error" && <div>${swarError}</div>
       )}
     </div>
   );

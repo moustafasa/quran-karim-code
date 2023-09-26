@@ -6,7 +6,7 @@ import axios from "axios";
 export const fetchAyahs = createAsyncThunk(
   "telawa/fetchAyahs",
   async (page, { rejectWithValue }) => {
-    const res = await axios(`${alquranCloudApi}/pageft/${page}`);
+    const res = await axios(`${alquranCloudApi}/page/${page}`);
     return res.data.data.ayahs;
   }
 );
@@ -15,7 +15,6 @@ const initialState = {
   ayahs: [],
   savedAyah: JSON.parse(localStorage.getItem("telawaSaved")) || {},
   status: "idle",
-  error: null,
 };
 const telawaSlice = createSlice({
   name: "telawa",
@@ -36,8 +35,7 @@ const telawaSlice = createSlice({
         state.status = "idle";
       })
       .addCase(fetchAyahs.rejected, (state, action) => {
-        state.status = "error";
-        state.error = action.error.message;
+        state.status = "idle";
       });
   },
 });
@@ -46,7 +44,7 @@ const telawaSlice = createSlice({
 export const getAyahs = (state) => state.telawa.ayahs;
 export const getTelawaSavedAyah = (state) => state.telawa.savedAyah;
 export const getTelawaStatus = (state) => state.telawa.status;
-export const getTelawaError = (state) => state.telawa.error;
+// export const getTelawaError = (state) => state.telawa.error;
 
 // action creators
 export const { changeTelawaSavedAyah } = telawaSlice.actions;

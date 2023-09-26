@@ -1,30 +1,37 @@
-import React, { useEffect } from "react";
-import { useParams } from "react-router-dom";
+import React, { useEffect, useRef } from "react";
+import { useParams, useSearchParams } from "react-router-dom";
 import MainHeading from "../../basic-components/MainHeading/MainHeading";
 import { useDispatch, useSelector } from "react-redux";
 import {
   fetchResults,
   getAllResults,
   getCurrentSearchPage,
+  getSearchStatus,
   getTotalSearchPages,
 } from "../../rtk/slices/searchSlice";
 import Pagination from "../../basic-components/Pagination/Pagination";
 import SearchResult from "../../components/SearchResult/SearchResult";
+import useSpinnerWithMinTime from "../../customHooks/useSpinnerWithMinTime";
+import Spinner from "../../basic-components/Spinner/Spinner";
 
 const Search = () => {
-  const { q } = useParams();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const q = searchParams?.get("q");
 
   const dispatch = useDispatch();
   const results = useSelector(getAllResults);
   const totalPages = useSelector(getTotalSearchPages);
   const currentPage = useSelector(getCurrentSearchPage);
-
+  const searchStatus = useSelector(getSearchStatus);
+  const spinnerShowed = useSpinnerWithMinTime(searchStatus);
   const setCurrentPage = (page) => {
     dispatch(fetchResults({ q, page: page }));
   };
 
   useEffect(() => {
-    if (q) dispatch(fetchResults({ q, page: 1 }));
+    if (q && searchStatus === "idle") {
+      dispatch(fetchResults({ q, page: 1 }));
+    }
   }, [q, dispatch]);
 
   return (
@@ -44,11 +51,15 @@ const Search = () => {
           );
         })}
       </ul> */}
-      <ul>
-        {results.map((verse) => (
-          <SearchResult verse={verse} key={verse.verse_key} />
-        ))}
-      </ul>
+      {spinnerShowed ? (
+        <Spinner />
+      ) : (
+        <ul>
+          {results.map((verse) => (
+            <SearchResult verse={verse} key={verse.verse_key} />
+          ))}
+        </ul>
+      )}
       <Pagination
         pagesNumber={totalPages}
         currentPage={currentPage}

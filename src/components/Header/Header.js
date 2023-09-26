@@ -1,5 +1,10 @@
 import React, { useRef } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import {
+  Link,
+  useLocation,
+  useNavigate,
+  useSearchParams,
+} from "react-router-dom";
 import "./Header.scss";
 import logo from "../../imgs/logo.jpeg";
 import { FaSearch } from "react-icons/fa";
@@ -12,16 +17,23 @@ const Header = () => {
   const navigator = useNavigate();
   const location = useLocation();
   const lastPath = useRef();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   // handlers
   const searchHanlder = (e) => {
     if (e.target.value !== "" && e.target.value !== " ") {
       if (!/search/g.test(location.pathname)) {
         lastPath.current = location.pathname;
+        navigator(`/search?q=${e.target.value}`);
+      } else {
+        setSearchParams({ q: e.target.value }, { replace: true });
       }
-      navigator(`/search/${e.target.value}`);
     } else {
-      navigator(lastPath.current);
+      if (
+        /search/g.test(location.pathname) &&
+        !/search/g.test(lastPath.current)
+      )
+        navigator(lastPath.current);
     }
   };
 
@@ -37,7 +49,7 @@ const Header = () => {
             type="text"
             placeholder="بحث..."
             lang="ar"
-            onChange={searchHanlder}
+            onKeyUp={searchHanlder}
             defaultValue={query}
           />
           <button>

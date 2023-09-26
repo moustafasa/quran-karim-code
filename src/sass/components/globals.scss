@@ -29,9 +29,10 @@
   border-radius: 5px;
 }
 
-.Toastify__toast--error {
+.Toastify__toast-body {
   top: 20px;
   z-index: 10000;
+  align-items: flex-start;
 }
 
 body {
