@@ -17,11 +17,12 @@ export const changePageByAyah = createAsyncThunk(
   async (ayah, { dispatch, getState }) => {
     if (/[:]/g.test(ayah)) {
       const res = await axios(`${alquranCloudApi}/ayah/${ayah}`);
-      dispatch(changePage(res.data.data.page));
+      dispatch(choosePage(res.data.data.page));
+      dispatch(chooseSorah(res.data.data.surah.number));
     } else {
       const surah = getCurrentSorah(getState());
       const res = await axios(`${alquranCloudApi}/ayah/${surah}:${ayah}`);
-      dispatch(choosePage(res.data.data.page));
+      dispatch(changePage(res.data.data.page));
     }
   }
 );
@@ -36,6 +37,7 @@ export const changePage = (page) => (dispatch, getState) => {
     const pageSwar = swar.filter(
       (sorah) => sorah.start_page <= page && sorah.end_page >= page
     );
+
     if (pageSwar.findIndex((surah) => +surah.id === +currentSurah) < 0)
       dispatch(chooseSorah(pageSwar[0]?.id));
   } else {

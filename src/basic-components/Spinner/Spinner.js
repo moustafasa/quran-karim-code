@@ -1,10 +1,10 @@
 import sass from "./Spinner.module.scss";
 
-const Spinner = () => {
+const Spinner = ({ showP = true }) => {
   return (
     <div className={sass.spinnerCont}>
       <div className={sass.spinner}></div>
-      <p className={sass.label}>جاري التحميل...</p>
+      {showP && <p className={sass.label}>جاري التحميل...</p>}
     </div>
   );
 };

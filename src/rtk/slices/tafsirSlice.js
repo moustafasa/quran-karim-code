@@ -1,4 +1,9 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import {
+  createAsyncThunk,
+  createEntityAdapter,
+  createSelector,
+  createSlice,
+} from "@reduxjs/toolkit";
 import { alquranCloudApi } from "../urls";
 import axios from "axios";
 
@@ -23,8 +28,15 @@ export const fetchTafsirText = createAsyncThunk(
   }
 );
 
+const tafsirTextAdapter = createEntityAdapter({
+  selectId: (ayah) => `${ayah.surah.number}:${ayah.numberInSurah}`,
+});
+
 const initialState = {
-  tafsirText: { entities: [], status: "idle", error: null },
+  tafsirText: tafsirTextAdapter.getInitialState({
+    status: "idle",
+    error: null,
+  }),
   tafsirTypes: { entities: [], status: "idle", error: null },
   currentTafsir: "",
   savedAyah: JSON.parse(localStorage.getItem("tafsirSaved")) || {},
@@ -40,6 +52,9 @@ const tafsirSlice = createSlice({
     changeTafsirSavedAyah(state, action) {
       localStorage.setItem("tafsirSaved", JSON.stringify(action.payload));
       state.savedAyah = action.payload;
+    },
+    changeTafsirTextStatus(state, action) {
+      state.tafsirText.status = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -61,12 +76,15 @@ const tafsirSlice = createSlice({
         if (state.currentTafsir !== "") state.tafsirText.status = "loading";
       })
       .addCase(fetchTafsirText.fulfilled, (state, action) => {
-        state.tafsirText.entities = action.payload;
-        state.tafsirText.status = "idle";
+        tafsirTextAdapter.setAll(state.tafsirText, action.payload);
+        if (state.currentTafsir !== "") {
+          state.tafsirText.status = "success";
+        } else {
+          state.tafsirText.status = "idle";
+        }
       })
       .addCase(fetchTafsirText.rejected, (state, action) => {
         state.tafsirText.status = "idle";
-        state.tafsirText.error = action.error.message;
       });
   },
 });
@@ -74,13 +92,20 @@ const tafsirSlice = createSlice({
 // selectors
 export const getTafsirTypes = (state) => state.tafsir.tafsirTypes.entities;
 export const getCurrentTafsir = (state) => state.tafsir.currentTafsir;
-export const getTafsirText = (state) => state.tafsir.tafsirText.entities;
 export const getTafsirSavedAyah = (state) => state.tafsir.savedAyah;
 export const getTafsirTextStatus = (state) => state.tafsir.tafsirText.status;
+export const getIsTafsirActiveReading = createSelector(
+  [getTafsirSavedAyah, (state, ayah) => ayah],
+  (savedAyah, ayahId) => savedAyah.ayahId === ayahId
+);
 // export const getTafsirTextError = (state) => state.swar.error;
 
+export const { selectIds: getTafsirText, selectById: getTafsirById } =
+  tafsirTextAdapter.getSelectors((state) => state.tafsir.tafsirText);
+
 // action creators
-export const { changeTafsir, changeTafsirSavedAyah } = tafsirSlice.actions;
+export const { changeTafsir, changeTafsirTextStatus, changeTafsirSavedAyah } =
+  tafsirSlice.actions;
 
 // reducer
 export default tafsirSlice.reducer;

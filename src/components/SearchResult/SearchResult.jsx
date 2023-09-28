@@ -5,16 +5,17 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   changeFocus,
   changePageByAyah,
+  changeSorah,
   getAllSwar,
 } from "../../rtk/slices/swarSlice";
 
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { changePlayState } from "../../rtk/slices/recitingSlice";
 
 export default function SearchResult({ verse }) {
   // selectors
   const swar = useSelector(getAllSwar);
   const dispatch = useDispatch();
-
   // functions
   const verseSorah = (verse) =>
     swar.find((surah) => {
@@ -23,7 +24,8 @@ export default function SearchResult({ verse }) {
   const verseNumber = (verse) => verse.verse_key.split(":")[1];
 
   // handler
-  const goHandler = () => {
+  const goHandler = async (e) => {
+    await dispatch(changePlayState(false));
     dispatch(changePageByAyah(verse.verse_key));
     dispatch(changeFocus(verse.verse_key));
   };

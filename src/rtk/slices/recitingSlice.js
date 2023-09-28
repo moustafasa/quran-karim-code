@@ -4,7 +4,7 @@ import {
   createSlice,
 } from "@reduxjs/toolkit";
 import axios from "axios";
-import { mp3quranApi } from "../../rtk/urls";
+import { mp3quranApi, alquranCloudApi } from "../../rtk/urls";
 
 // async thunks
 export const fetchReciters = createAsyncThunk(
@@ -61,18 +61,19 @@ export const fetchAyatTiming = createAsyncThunk(
     const res = await axios(
       `${mp3quranApi}/ayat_timing?surah=${sorah}&read=${rId}`
     );
-    return res.data;
+    return { data: res.data, sorah };
   }
 );
 
 const initialState = {
   recitingType: "",
   reciters: { entities: [], status: "idle", error: null },
-  ayatTiming: { entities: [], status: "idle", error: null },
+  ayatTiming: { entities: [], status: "idle", error: null, sorah: 0 },
   currentReciter: -1,
   currentTime: 0,
   currentAyah: 0,
   playState: false,
+  recitingStatus: "idle",
 };
 const recitingSlice = createSlice({
   name: "reciting",
@@ -96,6 +97,12 @@ const recitingSlice = createSlice({
     changeCurrentRecitingAyah(state, action) {
       state.currentAyah = action.payload;
     },
+    changeRecitingStatus(state, action) {
+      state.recitingStatus = action.payload;
+    },
+    changeAyatTimingStatus(state, action) {
+      state.ayatTiming.status = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -108,23 +115,23 @@ const recitingSlice = createSlice({
       })
       .addCase(fetchReciters.rejected, (state, action) => {
         state.reciters.status = "idle";
-        state.reciters.error = action.error.message;
       });
     builder
       .addCase(fetchAyatTiming.fulfilled, (state, action) => {
-        state.ayatTiming.entities = action.payload.map((ayah) => {
+        state.ayatTiming.entities = action.payload.data.map((ayah) => {
           ayah.start_time /= 1000;
           ayah.end_time /= 1000;
           return ayah;
         });
-        state.ayatTiming.status = "idle";
+        state.ayatTiming.sorah = action.payload.sorah;
+        state.ayatTiming.status = "success";
       })
       .addCase(fetchAyatTiming.pending, (state, action) => {
         state.ayatTiming.status = "loading";
+        state.ayatTiming.entities = [];
       })
       .addCase(fetchAyatTiming.rejected, (state, action) => {
         state.ayatTiming.status = "idle";
-        state.ayatTiming.error = action.error.message;
       });
   },
 });
@@ -145,10 +152,20 @@ export const getAyahTimingById = createSelector(
 export const getCurrentTime = (state) => state.reciting.currentTime;
 export const getCurrentPlayState = (state) => state.reciting.playState;
 export const getCurrentRecitingAyah = (state) => state.reciting.currentAyah;
+export const getIsActiveRecitingAyah = createSelector(
+  [getCurrentRecitingAyah, (state, id) => id],
+  (currentRecitng, nowAyah) => currentRecitng === nowAyah
+);
 export const getAyatTimingStatus = (state) => state.reciting.ayatTiming.status;
 export const getAyatTimingError = (state) => state.reciting.ayatTiming.error;
 export const getRecitersStatus = (state) => state.reciting.reciters.status;
+export const getRecitingStatus = (state) => state.reciting.recitingStatus;
 export const getRecitersError = (state) => state.reciting.reciters.error;
+export const getAyatTimingSorah = (state) => state.reciting.ayatTiming.sorah;
+export const getIsFirstPlay = createSelector(
+  [(state) => getCurrentTime(state) === 0],
+  (value) => value
+);
 
 // action creators
 export const {
@@ -156,6 +173,8 @@ export const {
   changeCurrentReciter,
   changeCurrentTime,
   changePlayState,
+  changeRecitingStatus,
+  changeAyatTimingStatus,
 } = recitingSlice.actions;
 export const { changeCurrentRecitingAyah } = recitingSlice.actions;
 

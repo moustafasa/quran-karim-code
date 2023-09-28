@@ -2,17 +2,30 @@ import React, { memo, useEffect, useRef, useState } from "react";
 import "./Verse.scss";
 import ContextMenu from "../../basic-components/ContextMenu/ContextMenu";
 import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import {
   changeCurrentTime,
   changePlayState,
   getAyahTimingById,
   getCurrentPlayState,
   getCurrentReciterId,
+  getCurrentRecitingAyah,
+  getCurrentTime,
+  getIsActiveRecitingAyah,
+  getIsFirstPlay,
+  getRecitingStatus,
 } from "../../rtk/slices/recitingSlice";
 import AyahText from "../../basic-components/AyahText/AyahText";
-import { changeTelawaSavedAyah } from "../../rtk/slices/telawaSlice";
-import { changeTafsirSavedAyah } from "../../rtk/slices/tafsirSlice";
+import {
+  changeTelawaSavedAyah,
+  getAyahById,
+  getIsTelawaActiveReading,
+  isActiveReading,
+} from "../../rtk/slices/telawaSlice";
+import {
+  changeTafsirSavedAyah,
+  getIsTafsirActiveReading,
+} from "../../rtk/slices/tafsirSlice";
 import {
   changeFocus,
   checkFocusedAyah,
@@ -21,11 +34,11 @@ import {
 import useContextPosition from "../../customHooks/useContextPosition";
 import { useLongPress } from "use-long-press";
 
-const Verse = ({ ayah, activeReciting, activeReading, page }) => {
+const Verse = ({ ayahId, page }) => {
   // states
   const [contextShow, setContextShow] = useState(false);
   const [contextPosition, setContextPosition] = useState({ left: 0, top: 0 });
-  const ayahKey = useRef(`${ayah.surah.number}:${ayah.numberInSurah}`);
+
   const longPressBind = useLongPress(
     (e) => {
       setContextShow(true);
@@ -36,15 +49,28 @@ const Verse = ({ ayah, activeReciting, activeReading, page }) => {
   );
 
   // selectors
+  const ayah = useSelector((state) => getAyahById(state, ayahId));
+  const activeReciting = useSelector(
+    (state) => getIsActiveRecitingAyah(state, ayahId) && page === "telawa",
+    shallowEqual
+  );
+  const activeReading = useSelector(
+    (state) =>
+      page === "telawa"
+        ? getIsTelawaActiveReading(state, ayahId)
+        : getIsTafsirActiveReading(state, ayahId),
+    shallowEqual
+  );
+
   const ayahTiming = useSelector((state) =>
     getAyahTimingById(state, ayah.numberInSurah)
   );
   const playState = useSelector(getCurrentPlayState);
-  const isFocused = useSelector((state) =>
-    checkFocusedAyah(state, ayahKey.current)
-  );
+  const isFocused = useSelector((state) => checkFocusedAyah(state, ayahId));
   const currentReciter = useSelector(getCurrentReciterId);
   const currentSorah = useSelector(getCurrentSorah);
+  const recitingStatus = useSelector(getRecitingStatus);
+  const isFirstPlay = useSelector(getIsFirstPlay, shallowEqual);
 
   // others
   const ayahRef = useRef();
@@ -72,7 +98,7 @@ const Verse = ({ ayah, activeReciting, activeReading, page }) => {
       text: page === "telawa" ? "تفسير" : "تلاوة",
       handler() {
         page === "telawa" ? navigator("/tafsir") : navigator("/");
-        dispatch(changeFocus(ayahKey.current));
+        dispatch(changeFocus(ayahId));
         setContextShow(false);
       },
     },
@@ -81,14 +107,17 @@ const Verse = ({ ayah, activeReciting, activeReading, page }) => {
       async handler() {
         if (ayahTiming) {
           if (playState) {
-            dispatch(changePlayState(false));
+            await dispatch(changePlayState(false));
           }
           await dispatch(changeCurrentTime(ayahTiming.start_time));
-          dispatch(changePlayState(true));
+          await dispatch(changePlayState(true));
         }
         setContextShow(false);
       },
-      disabled: +currentReciter < 0 || +ayah.surah.number !== +currentSorah,
+      disabled:
+        +currentReciter < 0 ||
+        +ayah.surah.number !== +currentSorah ||
+        (recitingStatus === "loading" && isFirstPlay),
     },
     {
       text: "حفظ التقدم",
@@ -97,8 +126,7 @@ const Verse = ({ ayah, activeReciting, activeReading, page }) => {
           page === "telawa" ? changeTelawaSavedAyah : changeTafsirSavedAyah;
         dispatch(
           changeSavedAyah({
-            surah: ayah.surah.number,
-            ayah: ayah.numberInSurah,
+            ayahId,
             page: ayah.page,
           })
         );
@@ -144,7 +172,7 @@ const Verse = ({ ayah, activeReciting, activeReading, page }) => {
         dispatch(changeFocus(null));
       }, 2000);
     }
-  }, [isFocused]);
+  }, [isFocused, dispatch]);
   return (
     <>
       {basmalahCheck(ayah) && basmalah}

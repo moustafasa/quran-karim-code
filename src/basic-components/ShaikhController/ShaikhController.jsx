@@ -2,9 +2,12 @@ import React, { memo, useEffect } from "react";
 import SelectBox from "../../basic-components/SelectBox/SelectBox";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  changeAyatTimingStatus,
   changeCurrentReciter,
   fetchAyatTiming,
   fetchReciters,
+  getAyatTimingSorah,
+  getAyatTimingStatus,
   getCurrentReciterId,
   getRecitersList,
   getRecitingType,
@@ -17,15 +20,26 @@ const ShaikhController = () => {
   const sorah = useSelector(getCurrentSorah);
   const reciters = useSelector(getRecitersList);
   const currentReciter = useSelector(getCurrentReciterId);
+  const ayatTimngStatus = useSelector(getAyatTimingStatus);
+  const ayatTimngSorah = useSelector(getAyatTimingSorah);
   const dispatch = useDispatch();
 
   useEffect(() => {
+    dispatch(changeAyatTimingStatus("idle"));
+  }, [rType, currentReciter, sorah, dispatch]);
+
+  useEffect(() => {
     if (rType === "VerseByVerse") {
-      if (+currentReciter > -1 && +sorah > 0) {
+      if (
+        +currentReciter > -1 &&
+        +sorah > 0 &&
+        ayatTimngStatus === "idle" &&
+        +ayatTimngSorah !== +sorah
+      ) {
         dispatch(fetchAyatTiming({ sorah, rId: currentReciter }));
       }
     }
-  }, [rType, currentReciter, sorah, dispatch]);
+  }, [rType, currentReciter, sorah, ayatTimngSorah, ayatTimngStatus, dispatch]);
 
   // handlers
   const chooseCurrentReciter = (rId) => {

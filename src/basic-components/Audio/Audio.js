@@ -7,7 +7,9 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   changeCurrentTime,
   changePlayState,
+  changeRecitingStatus,
   getCurrentPlayState,
+  getRecitingStatus,
 } from "../../rtk/slices/recitingSlice";
 import "./Audio.scss";
 import HtmlAudio from "./HtmlAudio";
@@ -15,11 +17,11 @@ import HtmlAudio from "./HtmlAudio";
 const Audio = ({ src }) => {
   // states
   const [duration, setDuration] = useState(0);
-  const [canPlay, setCanPlay] = useState(false);
   const [downloaded, setDownloaded] = useState(0);
 
   // selectors
   const playState = useSelector(getCurrentPlayState);
+  const recitingStatus = useSelector(getRecitingStatus);
   const dispatch = useDispatch();
 
   // refs
@@ -33,25 +35,21 @@ const Audio = ({ src }) => {
     setPlayState(!playState);
   };
 
-  // effects
-  // useEffect(
-  //   (_) => {
-  //     audioRef.current.load();
-  //   },
-  //   [src]
-  // );
   useEffect(() => {
     if (audioRef.current) {
       const audio = audioRef.current;
       const onLoadStart = (_) => {
         setPlayState(false);
         dispatch(changeCurrentTime(0));
+        dispatch(changeRecitingStatus("loading"));
       };
       const onEnded = (_) => setPlayState(false);
       const onLoadedData = (e) => {
         setDuration(isNaN(e.target.duration) ? 0 : e.target.duration);
       };
-      const onCanPlayThrough = (e) => setCanPlay(true);
+      const onCanPlayThrough = (e) => {
+        dispatch(changeRecitingStatus("idle"));
+      };
       const onTimeUpdate = (e) => {
         setDuration(isNaN(e.target.duration) ? 0 : e.target.duration);
         dispatch(changeCurrentTime(e.target.currentTime));
@@ -61,6 +59,10 @@ const Audio = ({ src }) => {
           setDownloaded(e.target.buffered.end(e.target.buffered.length - 1));
       };
 
+      const onWaiting = (e) => {
+        if (!audioRef.current.paused) dispatch(changeRecitingStatus("loading"));
+      };
+
       const events = {
         loadstart: onLoadStart,
         ended: onEnded,
@@ -68,6 +70,7 @@ const Audio = ({ src }) => {
         timeupdate: onTimeUpdate,
         loadeddata: onLoadedData,
         progress: onProgress,
+        waiting: onWaiting,
       };
       Object.entries(events).forEach((event) =>
         audio.addEventListener(event[0], event[1])
@@ -85,44 +88,23 @@ const Audio = ({ src }) => {
       audioRef.current.src = src;
       audioRef.current.type = "audio/mpeg";
       audioRef.current.load();
+    } else {
     }
   }, [src]);
 
   return (
     <div className="audio-cont" style={{ direction: "ltr" }}>
-      {/* <audio
-        ref={audioRef}
-        preload="auto"
-        // events
-        onLoadStart={(_) => {
-          setPlayState(false);
-          dispatch(changeCurrentTime(0));
-        }}
-        onEnded={(_) => setPlayState(false)}
-        onLoadedData={(e) => {
-          setDuration(isNaN(e.target.duration) ? 0 : e.target.duration);
-        }}
-        onCanPlayThrough={(e) => setCanPlay(true)}
-        onTimeUpdate={(e) => {
-          setDuration(isNaN(e.target.duration) ? 0 : e.target.duration);
-          dispatch(changeCurrentTime(e.target.currentTime));
-        }}
-        onProgress={(e) => {
-          e.target.buffered.length > 0 &&
-            setDownloaded(e.target.buffered.end(e.target.buffered.length - 1));
-        }}
-        crossOrigin="anonymous"
-      >
-        <source src={src} type="audio/mpeg" />
-        the audio not supported
-      </audio> */}
       <HtmlAudio audioRef={audioRef} src={src} />
-      <PlayControl playHandler={playHandler} canPlay={canPlay} />
+      <PlayControl
+        playHandler={playHandler}
+        recitingStatus={recitingStatus}
+        duration={duration}
+      />
       <DisplayTrack
         audioRef={audioRef}
         duration={duration}
         progressEnd={downloaded}
-        canPlay={canPlay}
+        recitingStatus={recitingStatus}
       />
       <Volume audioRef={audioRef} />
     </div>

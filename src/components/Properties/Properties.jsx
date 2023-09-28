@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   changeFocus,
   changePage,
+  changePageByAyah,
   changeSorah,
   getCurrentPage,
   getCurrentSorah,
@@ -36,9 +37,8 @@ const Properties = () => {
   // handlers
   const goToSavedAyahHandler = () => {
     dispatch(changePlayState(false));
-    dispatch(changeSorah(savedAyah.surah));
-    dispatch(changePage(savedAyah.page));
-    dispatch(changeFocus(`${savedAyah.surah}:${savedAyah.ayah}`));
+    dispatch(changePageByAyah(savedAyah.ayahId));
+    dispatch(changeFocus(savedAyah.ayahId));
   };
 
   return (
@@ -62,7 +62,7 @@ const Properties = () => {
         <button
           className="saved-verse-btn"
           onClick={goToSavedAyahHandler}
-          disabled={!Boolean(savedAyah?.surah)}
+          disabled={!Boolean(savedAyah)}
         >
           متابعة القراءة من حيث انتهيت
         </button>

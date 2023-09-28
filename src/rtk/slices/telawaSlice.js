@@ -1,4 +1,9 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import {
+  createAsyncThunk,
+  createEntityAdapter,
+  createSelector,
+  createSlice,
+} from "@reduxjs/toolkit";
 import { alquranCloudApi } from "../urls";
 import axios from "axios";
 
@@ -11,11 +16,22 @@ export const fetchAyahs = createAsyncThunk(
   }
 );
 
-const initialState = {
-  ayahs: [],
+const ayasEntity = createEntityAdapter({
+  selectId: (ayah) => {
+    return `${ayah.surah.number}:${ayah.numberInSurah}`;
+  },
+});
+
+const initialState = ayasEntity.getInitialState({
   savedAyah: JSON.parse(localStorage.getItem("telawaSaved")) || {},
   status: "idle",
-};
+});
+
+// const initialState = {
+//   ayahs: [],
+//   savedAyah: JSON.parse(localStorage.getItem("telawaSaved")) || {},
+//   status: "idle",
+// };
 const telawaSlice = createSlice({
   name: "telawa",
   initialState,
@@ -24,6 +40,9 @@ const telawaSlice = createSlice({
       localStorage.setItem("telawaSaved", JSON.stringify(action.payload));
       state.savedAyah = action.payload;
     },
+    changeTelawaStatus(state, action) {
+      state.status = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -31,8 +50,8 @@ const telawaSlice = createSlice({
         state.status = "loading";
       })
       .addCase(fetchAyahs.fulfilled, (state, action) => {
-        state.ayahs = action.payload;
-        state.status = "idle";
+        ayasEntity.setAll(state, action.payload);
+        state.status = "success";
       })
       .addCase(fetchAyahs.rejected, (state, action) => {
         state.status = "idle";
@@ -41,13 +60,21 @@ const telawaSlice = createSlice({
 });
 
 // selectors
-export const getAyahs = (state) => state.telawa.ayahs;
+// export const getAyahs = (state) => state.telawa.ayahs;
 export const getTelawaSavedAyah = (state) => state.telawa.savedAyah;
 export const getTelawaStatus = (state) => state.telawa.status;
 // export const getTelawaError = (state) => state.telawa.error;
+export const getIsTelawaActiveReading = createSelector(
+  [getTelawaSavedAyah, (state, ayah) => ayah],
+  (savedAyah, ayahId) => savedAyah.ayahId === ayahId
+);
+
+export const { selectIds: getAyahs, selectById: getAyahById } =
+  ayasEntity.getSelectors((state) => state.telawa);
 
 // action creators
-export const { changeTelawaSavedAyah } = telawaSlice.actions;
+export const { changeTelawaSavedAyah, changeTelawaStatus } =
+  telawaSlice.actions;
 
 // reducer
 export default telawaSlice.reducer;

@@ -5,8 +5,9 @@ import SorahName from "../../basic-components/SorahName/SorahName";
 import "./Tafsir.scss";
 import TafsirVerse from "../../components/TafsirVerse/TafsirVerse";
 import Fehres from "../../components/Fehres/Fehres";
-import { getCurrentPage } from "../../rtk/slices/swarSlice";
+import { getCurrentPage, getCurrentSorah } from "../../rtk/slices/swarSlice";
 import {
+  changeTafsirTextStatus,
   fetchTafsirText,
   getCurrentTafsir,
   getTafsirText,
@@ -20,28 +21,31 @@ const Tafsir = () => {
   // selectors
   const currentPage = useSelector(getCurrentPage);
   const tafsirType = useSelector(getCurrentTafsir);
-  const tafsir = useSelector(getTafsirText);
   const sorahText = useSelector(getAyahs);
   const dispatch = useDispatch();
   const tafsirStatus = useSelector(getTafsirTextStatus);
   const spinnerShowed = useSpinnerWithMinTime(tafsirStatus);
+  const currentSorah = useSelector(getCurrentSorah);
 
   // effects
   useEffect(() => {
     if (currentPage > 0 && tafsirStatus === "idle")
       dispatch(fetchTafsirText({ currentPage, tafsirType }));
+  }, [currentPage, tafsirType, tafsirStatus, dispatch]);
+
+  useEffect(() => {
+    dispatch(changeTafsirTextStatus("idle"));
   }, [currentPage, tafsirType, dispatch]);
 
   // supcomponents
-  console.log(spinnerShowed);
   const tafsirText = () =>
     spinnerShowed ? (
       <Spinner />
-    ) : tafsir.length > 0 ? (
+    ) : tafsirStatus === "success" ? (
       sorahText.map((ayah) => (
-        <Fragment key={ayah.number}>
-          {+ayah.numberInSurah === 1 && <SorahName ayah={ayah} />}
-          <TafsirVerse ayah={ayah} tafsir={tafsir} />
+        <Fragment key={ayah}>
+          {ayah === `${currentSorah}:${ayah}` && <SorahName ayahId={ayah} />}
+          <TafsirVerse ayahId={ayah} />
         </Fragment>
       ))
     ) : (

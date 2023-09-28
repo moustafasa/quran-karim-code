@@ -41,7 +41,6 @@ const searchSlice = createSlice({
       })
       .addCase(fetchResults.rejected, (state, action) => {
         state.status = "idle";
-        state.error = action.error.message;
       });
   },
 });

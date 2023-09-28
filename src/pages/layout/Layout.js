@@ -5,7 +5,11 @@ import { Outlet, useLocation } from "react-router-dom";
 import Pagination from "../../basic-components/Pagination/Pagination";
 import { useDispatch, useSelector } from "react-redux";
 import { changePage, getCurrentPage } from "../../rtk/slices/swarSlice";
-import { fetchAyahs, getTelawaStatus } from "../../rtk/slices/telawaSlice";
+import {
+  changeTelawaStatus,
+  fetchAyahs,
+  getTelawaStatus,
+} from "../../rtk/slices/telawaSlice";
 import sass from "./Layout.module.scss";
 
 const Layout = () => {
@@ -15,13 +19,18 @@ const Layout = () => {
 
   const dispatch = useDispatch();
   const setCurrentPage = (page) => {
+    // console.log(page, " layout");
     dispatch(changePage(page));
   };
 
   useEffect(() => {
+    dispatch(changeTelawaStatus("idle"));
+  }, [currentPage]);
+
+  useEffect(() => {
     if (currentPage > 0 && telawaStatus === "idle")
       dispatch(fetchAyahs(currentPage));
-  }, [currentPage, dispatch]);
+  }, [currentPage, dispatch, telawaStatus]);
 
   return (
     <div className={sass.container + " container"}>

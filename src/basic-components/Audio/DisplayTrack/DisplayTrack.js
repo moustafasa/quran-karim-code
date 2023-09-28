@@ -9,7 +9,7 @@ import {
 import "./DisplayTrack.scss";
 import useConvertTimeForm from "../../../customHooks/useConvertTimeForm";
 
-const DisplayTrack = ({ audioRef, duration, progressEnd, canPlay }) => {
+const DisplayTrack = ({ audioRef, duration, progressEnd, recitingStatus }) => {
   // selectors
   const playState = useSelector(getCurrentPlayState);
   const nowTime = useSelector(getCurrentTime);
@@ -33,19 +33,22 @@ const DisplayTrack = ({ audioRef, duration, progressEnd, canPlay }) => {
   // effects
   // seeking audio (change audio current time)
   useEffect(() => {
-    if (!playState && audioRef.current) {
+    if (!playState && audioRef.current && recitingStatus === "idle") {
       audioRef.current.currentTime = nowTime;
     }
-  }, [nowTime, audioRef, playState]);
+  }, [nowTime, audioRef, playState, recitingStatus]);
 
   // change playState
   useEffect(() => {
-    if (playState && canPlay) {
-      audioRef.current?.play();
+    const play = async () => await audioRef.current?.play();
+    const pause = async () => await audioRef.current?.pause();
+
+    if (playState && recitingStatus === "idle") {
+      play();
     } else {
-      audioRef.current?.pause();
+      pause();
     }
-  }, [playState, audioRef, canPlay]);
+  }, [playState, audioRef]);
 
   return (
     <div className="display-track">

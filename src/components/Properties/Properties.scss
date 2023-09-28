@@ -19,14 +19,14 @@
   .info {
     @include centerbyflex("vertical");
     justify-content: space-evenly;
-    row-gap: 10px;
+    gap: 10px 15px;
     flex-wrap: wrap;
     border-top: 2px dashed $blue-2-color;
     padding-top: 20px;
     font-size: 1rem;
     ul.data {
       display: flex;
-      gap: 10px 50px;
+      gap: 10px 40px;
       flex-wrap: wrap;
       justify-content: center;
       li {

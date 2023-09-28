@@ -12,13 +12,14 @@ import {
   getCurrentSorah,
 } from "../../rtk/slices/swarSlice";
 import {
+  getAyahById,
   getAyahs,
-  getTelawaSavedAyah,
   getTelawaStatus,
 } from "../../rtk/slices/telawaSlice";
 import {
   changeCurrentRecitingAyah,
   getAllAyahTiming,
+  getAyatTimingSorah,
   getCurrentPlayState,
   getCurrentRecitingAyah,
   getCurrentTime,
@@ -32,12 +33,18 @@ const Telawa = () => {
   const currentPage = useSelector(getCurrentPage);
   const currentTime = useSelector(getCurrentTime);
   const ayahTiming = useSelector(getAllAyahTiming);
+  const ayahTimingSorah = useSelector(getAyatTimingSorah);
   const currentRecitingAyah = useSelector(getCurrentRecitingAyah);
+  const isCurrentRecitingAyah = useSelector((state) =>
+    getAyahById(state, currentRecitingAyah)
+  );
   const playState = useSelector(getCurrentPlayState);
-  const savedAyah = useSelector(getTelawaSavedAyah);
   const currentSorah = useSelector(getCurrentSorah);
   const telawaStatus = useSelector(getTelawaStatus);
-  const spinnerShowed = useSpinnerWithMinTime(telawaStatus);
+  const spinnerShowed = useSpinnerWithMinTime(
+    telawaStatus,
+    playState ? 100 : undefined
+  );
 
   // others
   const dispatch = useDispatch();
@@ -50,46 +57,30 @@ const Telawa = () => {
       const ayah = ayahTiming.find(
         (ayah) => currentTime >= ayah.start_time && currentTime <= ayah.end_time
       );
-      ayah && dispatch(changeCurrentRecitingAyah(ayah.ayah));
+      ayah &&
+        dispatch(changeCurrentRecitingAyah(`${ayahTimingSorah}:${ayah.ayah}`));
     }
-  }, [currentTime, ayahTiming, dispatch]);
+  }, [currentTime, ayahTimingSorah, dispatch]);
 
   // change page depending on current ayah
   useEffect(() => {
     if (sorahText.length > 0) {
-      const samePage = sorahText.findIndex(
-        (ayah) => ayah.page === "currentPage"
-      );
-      if (samePage < 0 && +currentRecitingAyah !== 0) {
+      if (!isCurrentRecitingAyah && !/0/g.test(currentRecitingAyah)) {
         dispatch(changePageByAyah(currentRecitingAyah));
       }
     }
-  }, [currentRecitingAyah]);
+  }, [currentRecitingAyah, dispatch]);
 
   // subComponent
   const ayahText = () => {
-    if (spinnerShowed && !playState) {
+    if (spinnerShowed) {
       return <Spinner />;
     } else {
       return sorahText.map((ayah) => {
-        const active =
-          +currentRecitingAyah === +ayah.numberInSurah &&
-          +currentSorah === +ayah.surah.number &&
-          playState;
-
-        const activeReading =
-          savedAyah &&
-          savedAyah?.surah === ayah.surah.number &&
-          savedAyah?.ayah === ayah.numberInSurah;
         return (
-          <Fragment key={ayah.number}>
-            {ayah.numberInSurah === 1 && <SorahName ayah={ayah} />}
-            <Verse
-              ayah={ayah}
-              activeReciting={active}
-              activeReading={activeReading}
-              page={"telawa"}
-            />
+          <Fragment key={ayah}>
+            {ayah === `${currentSorah}:1` && <SorahName ayahId={ayah} />}
+            <Verse ayahId={ayah} page={"telawa"} />
           </Fragment>
         );
       });
