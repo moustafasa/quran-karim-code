@@ -1,13 +1,14 @@
-import React, { Fragment, useEffect } from "react";
+import React, { Fragment, useEffect, useRef, useState } from "react";
 
 import Fehres from "../../components/Fehres/Fehres";
 import SorahName from "../../basic-components/SorahName/SorahName";
 import Verse from "../../components/Verse/Verse";
 
 import "./Telawa.scss";
-import { useDispatch, useSelector } from "react-redux";
+import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import {
   changePageByAyah,
+  getChangePageStatus,
   getCurrentPage,
   getCurrentSorah,
 } from "../../rtk/slices/swarSlice";
@@ -20,6 +21,7 @@ import {
   changeCurrentRecitingAyah,
   getAllAyahTiming,
   getAyatTimingSorah,
+  getAyatTimingStatus,
   getCurrentPlayState,
   getCurrentRecitingAyah,
   getCurrentTime,
@@ -51,21 +53,23 @@ const Telawa = () => {
 
   // effects
 
+  const ayatTimngStatus = useSelector(getAyatTimingStatus);
   // change ayah depending on current time
   useEffect(() => {
     if (ayahTiming.length > 0) {
       const ayah = ayahTiming.find(
         (ayah) => currentTime >= ayah.start_time && currentTime <= ayah.end_time
       );
-      ayah &&
+      if (ayah) {
         dispatch(changeCurrentRecitingAyah(`${ayahTimingSorah}:${ayah.ayah}`));
+      }
     }
-  }, [currentTime, ayahTimingSorah, dispatch]);
+  }, [currentTime, ayahTiming, ayahTimingSorah, dispatch]);
 
   // change page depending on current ayah
   useEffect(() => {
     if (sorahText.length > 0) {
-      if (!isCurrentRecitingAyah && !/0/g.test(currentRecitingAyah)) {
+      if (!isCurrentRecitingAyah && !/:0/g.test(currentRecitingAyah)) {
         dispatch(changePageByAyah(currentRecitingAyah));
       }
     }

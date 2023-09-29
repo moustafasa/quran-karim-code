@@ -4,7 +4,7 @@ import {
   createSlice,
 } from "@reduxjs/toolkit";
 import axios from "axios";
-import { mp3quranApi, alquranCloudApi } from "../../rtk/urls";
+import { mp3quranApi } from "../../rtk/urls";
 
 // async thunks
 export const fetchReciters = createAsyncThunk(
@@ -82,8 +82,11 @@ const recitingSlice = createSlice({
     changeRecitingType(state, action) {
       state.recitingType = action.payload;
       state.currentReciter = -1;
-      state.ayatTiming.entities = [];
       state.currentAyah = 0;
+    },
+    resetAyatTiming(state, action) {
+      state.ayatTiming.entities = [];
+      state.ayatTiming.sorah = 0;
     },
     changeCurrentReciter(state, action) {
       state.currentReciter = action.payload;
@@ -175,6 +178,7 @@ export const {
   changePlayState,
   changeRecitingStatus,
   changeAyatTimingStatus,
+  resetAyatTiming,
 } = recitingSlice.actions;
 export const { changeCurrentRecitingAyah } = recitingSlice.actions;
 

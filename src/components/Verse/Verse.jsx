@@ -4,6 +4,7 @@ import ContextMenu from "../../basic-components/ContextMenu/ContextMenu";
 import { useNavigate } from "react-router-dom";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import {
+  changeCurrentRecitingAyah,
   changeCurrentTime,
   changePlayState,
   getAyahTimingById,
@@ -109,7 +110,7 @@ const Verse = ({ ayahId, page }) => {
           if (playState) {
             await dispatch(changePlayState(false));
           }
-          await dispatch(changeCurrentTime(ayahTiming.start_time));
+          await dispatch(changeCurrentTime(ayahTiming.start_time + 0.00001));
           await dispatch(changePlayState(true));
         }
         setContextShow(false);

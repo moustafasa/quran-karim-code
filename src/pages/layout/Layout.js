@@ -19,13 +19,12 @@ const Layout = () => {
 
   const dispatch = useDispatch();
   const setCurrentPage = (page) => {
-    // console.log(page, " layout");
     dispatch(changePage(page));
   };
 
   useEffect(() => {
-    dispatch(changeTelawaStatus("idle"));
-  }, [currentPage]);
+    if (telawaStatus === "success") dispatch(changeTelawaStatus("idle"));
+  }, [currentPage, dispatch]);
 
   useEffect(() => {
     if (currentPage > 0 && telawaStatus === "idle")

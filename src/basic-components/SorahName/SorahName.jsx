@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import sorahNameImg from "../../imgs/sorahName.png";
 import sorahNameMobileImg from "../../imgs/heading.png";
 import "./SorahName.scss";
@@ -18,4 +18,4 @@ const SorahName = ({ ayahId }) => {
   );
 };
 
-export default SorahName;
+export default memo(SorahName);

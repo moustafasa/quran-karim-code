@@ -6,6 +6,7 @@ import Volume from "./Volume/Volume";
 import { useDispatch, useSelector } from "react-redux";
 import {
   changeCurrentTime,
+  changeFollowState,
   changePlayState,
   changeRecitingStatus,
   getCurrentPlayState,

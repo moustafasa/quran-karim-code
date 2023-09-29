@@ -11,6 +11,7 @@ import {
   getCurrentReciterId,
   getRecitersList,
   getRecitingType,
+  resetAyatTiming,
 } from "../../rtk/slices/recitingSlice";
 import { getCurrentSorah } from "../../rtk/slices/swarSlice";
 
@@ -25,21 +26,16 @@ const ShaikhController = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(changeAyatTimingStatus("idle"));
+    dispatch(resetAyatTiming());
   }, [rType, currentReciter, sorah, dispatch]);
 
   useEffect(() => {
     if (rType === "VerseByVerse") {
-      if (
-        +currentReciter > -1 &&
-        +sorah > 0 &&
-        ayatTimngStatus === "idle" &&
-        +ayatTimngSorah !== +sorah
-      ) {
+      if (+currentReciter > -1 && +sorah > 0 && +sorah !== +ayatTimngSorah) {
         dispatch(fetchAyatTiming({ sorah, rId: currentReciter }));
       }
     }
-  }, [rType, currentReciter, sorah, ayatTimngSorah, ayatTimngStatus, dispatch]);
+  }, [rType, currentReciter, sorah, dispatch]);
 
   // handlers
   const chooseCurrentReciter = (rId) => {
