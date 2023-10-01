@@ -1,6 +1,6 @@
 import React, { memo, useEffect, useState } from "react";
-import "./SelectBox.scss";
 import { FaCaretDown, FaCaretUp } from "react-icons/fa";
+import "./SelectBox.scss";
 
 /**
  * @param {options} param0 the options you need to be in select it should be like
@@ -11,7 +11,10 @@ import { FaCaretDown, FaCaretUp } from "react-icons/fa";
  * @param {valueState} param1 the state which will contain choosed value of select and the function * to set the value it should be like [selectValue,setSelect]
  * @returns customize select box
  */
-const SelectBox = ({ options, valueState: [selectValue, setSelectValue] }) => {
+const SelectBox = (
+  { options, valueState: [selectValue, setSelectValue] },
+  ariaLabel
+) => {
   // states
   const [optOpenClass, setOptOpenClass] = useState(false);
 
@@ -49,21 +52,24 @@ const SelectBox = ({ options, valueState: [selectValue, setSelectValue] }) => {
         <select
           value={selectValue}
           onChange={(e) => setSelectValue(e.target.value)}
+          aria-label={ariaLabel}
         >
           {options.map((opt, key) => (
-            <option key={key} value={opt.value}>
+            <option key={opt.value + key} value={opt.value}>
               {opt.text}
             </option>
           ))}
         </select>
       </div>
-      <ul className={`options ${!optOpenClass && "hidden"}`}>
+      <ul className={`options ${!optOpenClass && "hidden"}`} role="listbox">
         {options.map((opt, key) => (
           <li
-            key={key}
+            key={opt.value}
             onClick={chooseHandler}
             data-value={opt.value}
             className={`${selectValue === opt.value && "active"}`}
+            role="option"
+            aria-selected={opt.value === selectValue}
           >
             {opt.text}
           </li>

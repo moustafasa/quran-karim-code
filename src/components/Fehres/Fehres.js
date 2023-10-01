@@ -1,11 +1,11 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import "./Fehres.scss";
 import {
   changeSorah,
   getAllSwar,
   getSwarStatus,
 } from "../../rtk/slices/swarSlice";
+import "./Fehres.scss";
 
 const Fehres = () => {
   // selectors and dispatch
@@ -22,7 +22,7 @@ const Fehres = () => {
               <th>رقم السورة</th>
               <th>اسم السورة</th>
               <th>رقم الصفحة</th>
-              <th></th>
+              <th>نوع السورة</th>
             </tr>
           </thead>
           <tbody>

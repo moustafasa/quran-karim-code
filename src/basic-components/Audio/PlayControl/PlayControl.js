@@ -1,14 +1,14 @@
 import React, { memo, useEffect } from "react";
 import { FaPause, FaPlay } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
+import useSpinnerWithMinTime from "../../../customHooks/useSpinnerWithMinTime";
 import {
   changePlayState,
   getCurrentPlayState,
   getRecitingStatus,
 } from "../../../rtk/slices/recitingSlice";
-import "./PlayControl.scss";
 import Spinner from "../../Spinner/Spinner";
-import useSpinnerWithMinTime from "../../../customHooks/useSpinnerWithMinTime";
+import "./PlayControl.scss";
 
 const PlayControl = ({ duration }) => {
   const recitingStatus = useSelector(getRecitingStatus);
@@ -40,6 +40,7 @@ const PlayControl = ({ duration }) => {
       className="play-pause-btn audio-btn"
       onClick={playHandler}
       disabled={duration === 0}
+      aria-label="تشغيل الصوت"
     >
       {playState ? <FaPause /> : <FaPlay />}
     </button>

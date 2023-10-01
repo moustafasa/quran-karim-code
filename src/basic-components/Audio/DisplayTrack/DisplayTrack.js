@@ -7,8 +7,8 @@ import {
   getRecitingStatus,
 } from "../../../rtk/slices/recitingSlice";
 
-import "./DisplayTrack.scss";
 import useConvertTimeForm from "../../../customHooks/useConvertTimeForm";
+import "./DisplayTrack.scss";
 
 const DisplayTrack = ({ audioRef, duration, progressEnd }) => {
   // selectors
@@ -75,6 +75,7 @@ const DisplayTrack = ({ audioRef, duration, progressEnd }) => {
             100
           )}%`,
         }}
+        aria-label="الوقت الحالي للصوت"
       />
       <span>{timeConverter(duration)}</span>
     </div>

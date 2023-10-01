@@ -1,6 +1,6 @@
 import React, { memo, useEffect } from "react";
-import SelectBox from "../../basic-components/SelectBox/SelectBox";
 import { useDispatch, useSelector } from "react-redux";
+import SelectBox from "../../basic-components/SelectBox/SelectBox";
 import {
   changeAyatTimingStatus,
   changeCurrentReciter,
@@ -71,6 +71,7 @@ const ShaikhController = () => {
       <SelectBox
         options={options}
         valueState={[+currentReciter, chooseCurrentReciter]}
+        ariaLabel="اختار القارئ"
       />
     </div>
   );

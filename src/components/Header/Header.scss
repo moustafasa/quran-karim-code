@@ -63,7 +63,7 @@ header {
         }
       }
 
-      button {
+      i.icon {
         @include centerbyflex(null);
         @include centerbyposition("vertical", absolute);
         left: 1px;

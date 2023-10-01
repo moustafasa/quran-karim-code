@@ -1,12 +1,11 @@
-import React, { memo, useState } from "react";
-import SelectBox from "../../basic-components/SelectBox/SelectBox";
+import React, { memo } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import SelectBox from "../../basic-components/SelectBox/SelectBox";
 import {
   changeSorah,
   getAllSwar,
   getCurrentSorah,
 } from "../../rtk/slices/swarSlice";
-import Spinner from "../Spinner/Spinner";
 
 const SwarController = () => {
   // selectors and dispatch
@@ -29,7 +28,11 @@ const SwarController = () => {
   return (
     <div className="swar-controller controller">
       <span>السورة</span>
-      <SelectBox valueState={[+currentSorah, chooseSorah]} options={options} />
+      <SelectBox
+        valueState={[+currentSorah, chooseSorah]}
+        options={options}
+        ariaLabel="اختار السورة"
+      />
     </div>
   );
 };

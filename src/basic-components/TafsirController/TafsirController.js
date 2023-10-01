@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
-import SelectBox from "../../basic-components/SelectBox/SelectBox";
 import { useDispatch, useSelector } from "react-redux";
+import SelectBox from "../../basic-components/SelectBox/SelectBox";
 import {
   changeTafsir,
   fetchTafsirTypes,
@@ -38,6 +38,7 @@ const TafsirController = () => {
       <SelectBox
         valueState={[currentTafsir, changeTafsirValue]}
         options={options}
+        ariaLabel="اختار احد التفاسير"
       />
     </div>
   );

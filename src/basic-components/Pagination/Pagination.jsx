@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import "./Pagination.scss";
 import { FaAngleLeft } from "react-icons/fa";
+import "./Pagination.scss";
 
 const Pagination = ({
   pagesNumber,
@@ -78,12 +78,14 @@ const Pagination = ({
           onKeyDown={(e) => {
             e.key === "Enter" && goHandler();
           }}
+          aria-label="ادخل رقم الصفحة التي تريد الذهاب اليها"
         />
         <button
           className="go"
           type="button"
           disabled={inputPage === ""}
           onClick={goHandler}
+          aria-label="اذهب الي الصفحة المدخلة"
         >
           <FaAngleLeft />
         </button>

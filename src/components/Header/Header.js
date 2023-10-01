@@ -1,15 +1,15 @@
 import React, { useRef } from "react";
+import { FaSearch } from "react-icons/fa";
+import { useSelector } from "react-redux";
 import {
   Link,
   useLocation,
   useNavigate,
   useSearchParams,
 } from "react-router-dom";
-import "./Header.scss";
 import logo from "../../imgs/logo.jpeg";
-import { FaSearch } from "react-icons/fa";
-import { useSelector } from "react-redux";
 import { getQuery } from "../../rtk/slices/searchSlice";
+import "./Header.scss";
 
 const Header = () => {
   // variables
@@ -41,7 +41,10 @@ const Header = () => {
     <header>
       <div className="container">
         <Link to={"/"} className="logo">
-          <img src={logo} alt="القرءان الكريم" />
+          <img
+            src={logo}
+            alt="صورة مكتوب عليها القران الكريم و هي تعتبر لوجو الصفحة"
+          />
           <h1>موقع القرءان الكريم</h1>
         </Link>
         <div className="search">
@@ -52,9 +55,9 @@ const Header = () => {
             onKeyUp={searchHanlder}
             defaultValue={query}
           />
-          <button>
+          <i className="icon">
             <FaSearch />
-          </button>
+          </i>
         </div>
         <nav>
           <Link to={"/"}>تلاوة</Link>

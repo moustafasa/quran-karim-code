@@ -25,7 +25,11 @@ const Volume = ({ audioRef }) => {
 
   return (
     <div className="volume">
-      <button className="volume-btn audio-btn" onClick={() => setMute(!mute)}>
+      <button
+        className="volume-btn audio-btn"
+        onClick={() => setMute(!mute)}
+        aria-label="زرار مستوي الصوت"
+      >
         {mute ? (
           <FaVolumeMute />
         ) : volume < 5 ? (
@@ -47,6 +51,7 @@ const Volume = ({ audioRef }) => {
           onChange={(e) => {
             setVolume(e.target.value);
           }}
+          aria-label="التحكم في مستوي الصوت"
         />
       </div>
     </div>

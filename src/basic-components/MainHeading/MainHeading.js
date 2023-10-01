@@ -7,7 +7,7 @@ const MainHeading = ({ headText }) => {
   return (
     <h2 className="main-heading">
       <span>{headText}</span>
-      <img src={headingImg} alt="heading" />
+      <img src={headingImg} alt="اطار اسلامي يوضع بداخله عنوان الصفحة" />
     </h2>
   );
 };
