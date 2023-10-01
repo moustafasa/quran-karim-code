@@ -4,8 +4,8 @@ import {
   createSelector,
   createSlice,
 } from "@reduxjs/toolkit";
-import { alquranCloudApi } from "../urls";
 import axios from "axios";
+import { alquranCloudApi } from "../urls";
 
 // async thunks
 export const fetchTafsirTypes = createAsyncThunk(
@@ -98,7 +98,6 @@ export const getIsTafsirActiveReading = createSelector(
   [getTafsirSavedAyah, (state, ayah) => ayah],
   (savedAyah, ayahId) => savedAyah.ayahId === ayahId
 );
-// export const getTafsirTextError = (state) => state.swar.error;
 
 export const { selectIds: getTafsirText, selectById: getTafsirById } =
   tafsirTextAdapter.getSelectors((state) => state.tafsir.tafsirText);
