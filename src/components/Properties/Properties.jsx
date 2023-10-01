@@ -1,7 +1,11 @@
 import React from "react";
-import "./Properties.scss";
-import SwarController from "../../basic-components/SwarController.jsx/SwarController";
 import { useDispatch, useSelector } from "react-redux";
+import { Route, Routes, useLocation } from "react-router-dom";
+import RecitingType from "../../basic-components/RecitingType/RecitingType";
+import ShaikhController from "../../basic-components/ShaikhController/ShaikhController";
+import SwarController from "../../basic-components/SwarController.jsx/SwarController";
+import TafsirController from "../../basic-components/TafsirController/TafsirController";
+import { changePlayState } from "../../rtk/slices/recitingSlice";
 import {
   changeFocus,
   changePageByAyah,
@@ -9,13 +13,9 @@ import {
   getCurrentSorah,
   getSurahById,
 } from "../../rtk/slices/swarSlice";
-import TafsirController from "../../basic-components/TafsirController/TafsirController";
-import { Route, Routes, useLocation } from "react-router-dom";
-import ShaikhController from "../../basic-components/ShaikhController/ShaikhController";
-import RecitingType from "../../basic-components/RecitingType/RecitingType";
 import { getTafsirSavedAyah } from "../../rtk/slices/tafsirSlice";
 import { getTelawaSavedAyah } from "../../rtk/slices/telawaSlice";
-import { changePlayState } from "../../rtk/slices/recitingSlice";
+import "./Properties.scss";
 
 const Properties = () => {
   // others
@@ -60,7 +60,7 @@ const Properties = () => {
         <button
           className="saved-verse-btn"
           onClick={goToSavedAyahHandler}
-          disabled={!Boolean(savedAyah)}
+          disabled={!Boolean(savedAyah?.ayahId)}
         >
           متابعة القراءة من حيث انتهيت
         </button>
