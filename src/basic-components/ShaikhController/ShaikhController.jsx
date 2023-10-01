@@ -67,7 +67,7 @@ const ShaikhController = () => {
 
   return (
     <div className="shaikh-controller controller">
-      <span>fالقارئ</span>
+      <span>القارئ</span>
       <SelectBox
         options={options}
         valueState={[+currentReciter, chooseCurrentReciter]}
