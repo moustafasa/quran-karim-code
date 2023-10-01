@@ -23,12 +23,14 @@ const Layout = () => {
   };
 
   useEffect(() => {
-    if (telawaStatus === "success") dispatch(changeTelawaStatus("idle"));
+    if (telawaStatus === "success" || telawaStatus === "error")
+      dispatch(changeTelawaStatus("idle"));
   }, [currentPage, dispatch]);
 
   useEffect(() => {
-    if (currentPage > 0 && telawaStatus === "idle")
+    if (currentPage > 0 && telawaStatus === "idle") {
       dispatch(fetchAyahs(currentPage));
+    }
   }, [currentPage, dispatch, telawaStatus]);
 
   return (

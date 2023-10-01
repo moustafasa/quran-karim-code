@@ -42,9 +42,13 @@
         cursor: pointer;
         transition: 0.5s;
         box-shadow: 0 0 4px 0 $black-1-color;
-        &:hover {
+        &:hover,
+        &.active {
           background-color: $gold-color;
           box-shadow: 0 0 8px 0 $black-1-color;
+        }
+        &.disabled {
+          pointer-events: none;
         }
       }
     }

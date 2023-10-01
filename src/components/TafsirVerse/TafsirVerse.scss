@@ -17,6 +17,7 @@
     &.active,
     &:hover {
       background-color: $blue-2-color;
+      color: white;
     }
     &.active-reading {
       background-color: $green-3-color;

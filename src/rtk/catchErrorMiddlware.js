@@ -1,16 +1,18 @@
-import { isRejectedWithValue } from "@reduxjs/toolkit";
 import { toast } from "react-toastify"; // or your preferred library
 
-const catchError = (api) => (next) => (action) => {
+const catchError = (api) => (next) => async (action) => {
   const { error, ...rest } = action;
 
   if (error) {
     toast(
-      <>
-        <h2>error</h2>
-        <p>{error.message}</p>
-      </>,
-      { type: "error" }
+      <div className="error-cont">
+        <p className="msg">{error.message}</p>
+      </div>,
+      {
+        type: "error",
+        className: "error-body",
+        hideProgressBar: true,
+      }
     );
   }
 

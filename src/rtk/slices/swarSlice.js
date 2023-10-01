@@ -15,14 +15,10 @@ export const fetchSwar = createAsyncThunk("swar/fetchSwar", async () => {
 export const changePageByAyah = createAsyncThunk(
   "swar/changePageByAyah",
   async (ayah, { dispatch, getState }) => {
-    if (/[:]/g.test(ayah)) {
+    if (!/:0|0:/g.test(ayah)) {
       const res = await axios(`${alquranCloudApi}/ayah/${ayah}`);
-      dispatch(choosePage(res.data.data.page));
       dispatch(chooseSorah(res.data.data.surah.number));
-    } else {
-      const surah = getCurrentSorah(getState());
-      const res = await axios(`${alquranCloudApi}/ayah/${surah}:${ayah}`);
-      dispatch(changePage(res.data.data.page));
+      dispatch(choosePage(res.data.data.page));
     }
   }
 );
@@ -30,7 +26,6 @@ export const changePageByAyah = createAsyncThunk(
 // thunks
 export const changePage = (page) => (dispatch, getState) => {
   dispatch(choosePage(page));
-
   if (+page !== 0) {
     const swar = getAllSwar(getState());
     const currentSurah = getCurrentSorah(getState());
@@ -62,7 +57,6 @@ const initialState = {
   currentSorah: 0,
   focus: null,
   status: "idle",
-  error: null,
 };
 const swarSlice = createSlice({
   name: "swar",
@@ -77,6 +71,9 @@ const swarSlice = createSlice({
     changeFocus(state, action) {
       state.focus = action.payload;
     },
+    changeStatus(state, action) {
+      state.status = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -89,7 +86,6 @@ const swarSlice = createSlice({
       })
       .addCase(fetchSwar.rejected, (state, action) => {
         state.status = "error";
-        state.error = action.error.message;
       });
   },
 });

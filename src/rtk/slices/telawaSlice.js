@@ -4,13 +4,13 @@ import {
   createSelector,
   createSlice,
 } from "@reduxjs/toolkit";
-import { alquranCloudApi } from "../urls";
 import axios from "axios";
+import { alquranCloudApi } from "../urls";
 
 // thunks
 export const fetchAyahs = createAsyncThunk(
   "telawa/fetchAyahs",
-  async (page, { rejectWithValue }) => {
+  async (page) => {
     const res = await axios(`${alquranCloudApi}/page/${page}`);
     return res.data.data.ayahs;
   }
@@ -27,11 +27,6 @@ const initialState = ayasEntity.getInitialState({
   status: "idle",
 });
 
-// const initialState = {
-//   ayahs: [],
-//   savedAyah: JSON.parse(localStorage.getItem("telawaSaved")) || {},
-//   status: "idle",
-// };
 const telawaSlice = createSlice({
   name: "telawa",
   initialState,
@@ -54,7 +49,7 @@ const telawaSlice = createSlice({
         state.status = "success";
       })
       .addCase(fetchAyahs.rejected, (state, action) => {
-        state.status = "idle";
+        state.status = "error";
       });
   },
 });

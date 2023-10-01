@@ -6,6 +6,7 @@ import {
   changeCurrentReciter,
   fetchAyatTiming,
   fetchReciters,
+  getAyatTimingReciter,
   getAyatTimingSorah,
   getAyatTimingStatus,
   getCurrentReciterId,
@@ -23,19 +24,29 @@ const ShaikhController = () => {
   const currentReciter = useSelector(getCurrentReciterId);
   const ayatTimngStatus = useSelector(getAyatTimingStatus);
   const ayatTimngSorah = useSelector(getAyatTimingSorah);
+  const ayatTimingReciter = useSelector(getAyatTimingReciter);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(resetAyatTiming());
+    if (rType === "" || +currentReciter === -1 || sorah === 0) {
+      dispatch(resetAyatTiming());
+    } else {
+      dispatch(changeAyatTimingStatus("idle"));
+    }
   }, [rType, currentReciter, sorah, dispatch]);
 
   useEffect(() => {
     if (rType === "VerseByVerse") {
-      if (+currentReciter > -1 && +sorah > 0 && +sorah !== +ayatTimngSorah) {
+      if (
+        +currentReciter > -1 &&
+        +sorah > 0 &&
+        ayatTimngStatus === "idle" &&
+        (+sorah !== +ayatTimngSorah || +currentReciter !== +ayatTimingReciter)
+      ) {
         dispatch(fetchAyatTiming({ sorah, rId: currentReciter }));
       }
     }
-  }, [rType, currentReciter, sorah, dispatch]);
+  }, [rType, currentReciter, sorah, ayatTimngStatus, dispatch]);
 
   // handlers
   const chooseCurrentReciter = (rId) => {

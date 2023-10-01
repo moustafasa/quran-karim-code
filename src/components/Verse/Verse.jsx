@@ -4,24 +4,21 @@ import ContextMenu from "../../basic-components/ContextMenu/ContextMenu";
 import { useNavigate } from "react-router-dom";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import {
-  changeCurrentRecitingAyah,
   changeCurrentTime,
   changePlayState,
   getAyahTimingById,
   getCurrentPlayState,
   getCurrentReciterId,
-  getCurrentRecitingAyah,
-  getCurrentTime,
   getIsActiveRecitingAyah,
   getIsFirstPlay,
   getRecitingStatus,
+  getRecitingType,
 } from "../../rtk/slices/recitingSlice";
 import AyahText from "../../basic-components/AyahText/AyahText";
 import {
   changeTelawaSavedAyah,
   getAyahById,
   getIsTelawaActiveReading,
-  isActiveReading,
 } from "../../rtk/slices/telawaSlice";
 import {
   changeTafsirSavedAyah,
@@ -51,18 +48,6 @@ const Verse = ({ ayahId, page }) => {
 
   // selectors
   const ayah = useSelector((state) => getAyahById(state, ayahId));
-  const activeReciting = useSelector(
-    (state) => getIsActiveRecitingAyah(state, ayahId) && page === "telawa",
-    shallowEqual
-  );
-  const activeReading = useSelector(
-    (state) =>
-      page === "telawa"
-        ? getIsTelawaActiveReading(state, ayahId)
-        : getIsTafsirActiveReading(state, ayahId),
-    shallowEqual
-  );
-
   const ayahTiming = useSelector((state) =>
     getAyahTimingById(state, ayah.numberInSurah)
   );
@@ -72,6 +57,21 @@ const Verse = ({ ayahId, page }) => {
   const currentSorah = useSelector(getCurrentSorah);
   const recitingStatus = useSelector(getRecitingStatus);
   const isFirstPlay = useSelector(getIsFirstPlay, shallowEqual);
+  const rType = useSelector(getRecitingType);
+  const activeReciting = useSelector(
+    (state) =>
+      getIsActiveRecitingAyah(state, ayahId) &&
+      page === "telawa" &&
+      +currentReciter > -1,
+    shallowEqual
+  );
+  const activeReading = useSelector(
+    (state) =>
+      page === "telawa"
+        ? getIsTelawaActiveReading(state, ayahId)
+        : getIsTafsirActiveReading(state, ayahId),
+    shallowEqual
+  );
 
   // others
   const ayahRef = useRef();
@@ -118,7 +118,9 @@ const Verse = ({ ayahId, page }) => {
       disabled:
         +currentReciter < 0 ||
         +ayah.surah.number !== +currentSorah ||
-        (recitingStatus === "loading" && isFirstPlay),
+        (recitingStatus === "loading" && isFirstPlay) ||
+        rType !== "VerseByVerse" ||
+        !ayahTiming,
     },
     {
       text: "حفظ التقدم",

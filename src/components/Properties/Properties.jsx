@@ -4,9 +4,7 @@ import SwarController from "../../basic-components/SwarController.jsx/SwarContro
 import { useDispatch, useSelector } from "react-redux";
 import {
   changeFocus,
-  changePage,
   changePageByAyah,
-  changeSorah,
   getCurrentPage,
   getCurrentSorah,
   getSurahById,

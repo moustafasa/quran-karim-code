@@ -10,6 +10,7 @@ import "./sass/components/animations.scss";
 import "./sass/components/fonts.scss";
 import "./sass/components/globals.scss";
 import "./sass/components/controllerBox.scss";
+import "./sass/components/errorsHandlers.scss";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(

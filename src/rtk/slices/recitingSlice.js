@@ -58,17 +58,27 @@ export const fetchReciters = createAsyncThunk(
 export const fetchAyatTiming = createAsyncThunk(
   "reciting/fetchAyatTiming",
   async ({ sorah, rId }) => {
-    const res = await axios(
-      `${mp3quranApi}/ayat_timing?surah=${sorah}&read=${rId}`
-    );
-    return { data: res.data, sorah };
+    if (+sorah > 0 && +rId > -1) {
+      const res = await axios(
+        `${mp3quranApi}/ayat_timing?surah=${sorah}&read=${rId}`
+      );
+      return { data: res.data, sorah, reciter: rId };
+    } else {
+      return { data: [], sorah: 0 };
+    }
   }
 );
 
 const initialState = {
   recitingType: "",
   reciters: { entities: [], status: "idle", error: null },
-  ayatTiming: { entities: [], status: "idle", error: null, sorah: 0 },
+  ayatTiming: {
+    entities: [],
+    status: "idle",
+    error: null,
+    sorah: 0,
+    reciter: -1,
+  },
   currentReciter: -1,
   currentTime: 0,
   currentAyah: 0,
@@ -134,7 +144,7 @@ const recitingSlice = createSlice({
         state.ayatTiming.entities = [];
       })
       .addCase(fetchAyatTiming.rejected, (state, action) => {
-        state.ayatTiming.status = "idle";
+        state.ayatTiming.status = "error";
       });
   },
 });
@@ -169,6 +179,8 @@ export const getIsFirstPlay = createSelector(
   [(state) => getCurrentTime(state) === 0],
   (value) => value
 );
+export const getAyatTimingReciter = (state) =>
+  state.reciting.ayatTiming.reciter;
 
 // action creators
 export const {

@@ -1,19 +1,16 @@
 // imports
-import React, { useState, useRef, useEffect } from "react";
-import PlayControl from "./PlayControl/PlayControl";
-import DisplayTrack from "./DisplayTrack/DisplayTrack";
-import Volume from "./Volume/Volume";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useEffect, useRef, useState } from "react";
+import { useDispatch } from "react-redux";
 import {
   changeCurrentTime,
-  changeFollowState,
   changePlayState,
   changeRecitingStatus,
-  getCurrentPlayState,
-  getRecitingStatus,
 } from "../../rtk/slices/recitingSlice";
 import "./Audio.scss";
+import DisplayTrack from "./DisplayTrack/DisplayTrack";
 import HtmlAudio from "./HtmlAudio";
+import PlayControl from "./PlayControl/PlayControl";
+import Volume from "./Volume/Volume";
 
 const Audio = ({ src }) => {
   // states
@@ -21,8 +18,6 @@ const Audio = ({ src }) => {
   const [downloaded, setDownloaded] = useState(0);
 
   // selectors
-  const playState = useSelector(getCurrentPlayState);
-  const recitingStatus = useSelector(getRecitingStatus);
   const dispatch = useDispatch();
 
   // refs
@@ -31,9 +26,6 @@ const Audio = ({ src }) => {
   // handlers
   const setPlayState = (state) => {
     dispatch(changePlayState(state));
-  };
-  const playHandler = () => {
-    setPlayState(!playState);
   };
 
   useEffect(() => {
@@ -85,27 +77,24 @@ const Audio = ({ src }) => {
   }, [audioRef.current]);
 
   useEffect(() => {
-    if (src) {
+    if (src !== "") {
       audioRef.current.src = src;
       audioRef.current.type = "audio/mpeg";
       audioRef.current.load();
     } else {
+      audioRef.current.removeAttribute("src");
+      audioRef.current.load();
     }
   }, [src]);
 
   return (
     <div className="audio-cont" style={{ direction: "ltr" }}>
       <HtmlAudio audioRef={audioRef} src={src} />
-      <PlayControl
-        playHandler={playHandler}
-        recitingStatus={recitingStatus}
-        duration={duration}
-      />
+      <PlayControl duration={duration} />
       <DisplayTrack
         audioRef={audioRef}
         duration={duration}
         progressEnd={downloaded}
-        recitingStatus={recitingStatus}
       />
       <Volume audioRef={audioRef} />
     </div>

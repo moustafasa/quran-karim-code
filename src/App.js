@@ -1,18 +1,18 @@
-import { Route, Routes } from "react-router-dom";
-import Header from "./components/Header/Header";
-import AudioController from "./components/AudioController/AudioController";
-import Layout from "./pages/layout/Layout";
-import Search from "./pages/Search/Search";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchSwar, getSwarError, getSwarStatus } from "./rtk/slices/swarSlice";
-import { Suspense, lazy, useEffect } from "react";
-import Spinner from "./basic-components/Spinner/Spinner";
-import sass from "./App.module.scss";
+import { Route, Routes } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import useSpinnerWithMinTime from "./customHooks/useSpinnerWithMinTime";
-import Telawa from "./pages/telawa/Telawa";
 import Tafsir from "././pages/tafsir/Tafsir";
+import sass from "./App.module.scss";
+import Spinner from "./basic-components/Spinner/Spinner";
+import AudioController from "./components/AudioController/AudioController";
+import Header from "./components/Header/Header";
+import useSpinnerWithMinTime from "./customHooks/useSpinnerWithMinTime";
+import Search from "./pages/Search/Search";
+import Layout from "./pages/layout/Layout";
+import Telawa from "./pages/telawa/Telawa";
+import { fetchSwar, getSwarStatus } from "./rtk/slices/swarSlice";
 
 function App() {
   const dispatch = useDispatch();
@@ -20,7 +20,9 @@ function App() {
   const spinnerShowed = useSpinnerWithMinTime(swarStatus);
 
   useEffect(() => {
-    if (swarStatus === "idle") dispatch(fetchSwar());
+    if (swarStatus === "idle") {
+      dispatch(fetchSwar());
+    }
   }, [dispatch, swarStatus]);
 
   const content = () => {

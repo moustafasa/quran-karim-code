@@ -4,17 +4,24 @@ import {
   changeCurrentTime,
   getCurrentPlayState,
   getCurrentTime,
+  getRecitingStatus,
 } from "../../../rtk/slices/recitingSlice";
 
 import "./DisplayTrack.scss";
 import useConvertTimeForm from "../../../customHooks/useConvertTimeForm";
 
-const DisplayTrack = ({ audioRef, duration, progressEnd, recitingStatus }) => {
+const DisplayTrack = ({ audioRef, duration, progressEnd }) => {
   // selectors
   const playState = useSelector(getCurrentPlayState);
   const nowTime = useSelector(getCurrentTime);
+  const recitingStatus = useSelector(getRecitingStatus);
+
+  // others
   const timeConverter = useConvertTimeForm();
   const dispatch = useDispatch();
+  const roundedNowTime = Math.floor(nowTime);
+  const roundedDuration = Math.floor(duration);
+  const roundedProgress = Math.floor(progressEnd);
 
   // handlers
   const setNowTime = useCallback(
@@ -55,12 +62,18 @@ const DisplayTrack = ({ audioRef, duration, progressEnd, recitingStatus }) => {
       <span>{timeConverter(nowTime)}</span>
       <input
         type="range"
-        max={duration}
-        value={Math.min(duration, nowTime)}
+        max={roundedDuration}
+        value={Math.min(roundedDuration, roundedNowTime)}
         onChange={sliderHandler}
         style={{
-          "--progress": `${Math.min((nowTime / duration) * 100, 100)}%`,
-          "--downloaded": `${Math.min((progressEnd / duration) * 100, 100)}%`,
+          "--progress": `${Math.min(
+            (roundedNowTime / roundedDuration) * 100,
+            100
+          )}%`,
+          "--downloaded": `${Math.min(
+            (roundedProgress / roundedDuration) * 100,
+            100
+          )}%`,
         }}
       />
       <span>{timeConverter(duration)}</span>

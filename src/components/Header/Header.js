@@ -17,7 +17,7 @@ const Header = () => {
   const navigator = useNavigate();
   const location = useLocation();
   const lastPath = useRef();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [, setSearchParams] = useSearchParams();
 
   // handlers
   const searchHanlder = (e) => {
@@ -40,10 +40,10 @@ const Header = () => {
   return (
     <header>
       <div className="container">
-        <div className="logo">
+        <Link to={"/"} className="logo">
           <img src={logo} alt="القرءان الكريم" />
           <h1>موقع القرءان الكريم</h1>
-        </div>
+        </Link>
         <div className="search">
           <input
             type="text"

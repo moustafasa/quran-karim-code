@@ -1,0 +1,17 @@
+@use "../variables/colors" as *;
+@use "../variables/others" as *;
+@use "../helpers/mixins" as *;
+
+.error-body {
+  background-color: #f3cdcd;
+  border: 1px solid #e9b2bb;
+  color: black;
+  transition: 0.5s;
+}
+.error-msg {
+  font-size: 1.1rem;
+}
+
+.Toastify__toast-body {
+  z-index: 10000;
+}
