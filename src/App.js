@@ -46,10 +46,6 @@ function App() {
     <div className={sass.App}>
       <Header />
       {content()}
-      {/* <Spinner /> */}
-      {/* <div className="content">
-        <Spinner />
-      </div> */}
       <AudioController />
       <ToastContainer />
     </div>

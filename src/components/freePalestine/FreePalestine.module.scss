@@ -1,0 +1,32 @@
+@use "../../sass/helpers/mixins" as *;
+
+.freePalestine {
+  @include centerbyflex(null);
+  flex-direction: column;
+  gap: 10px;
+  text-align: center;
+  margin-bottom: 50px;
+  font-size: 1.5rem;
+  .img {
+    height: 100px;
+    width: 100%;
+    background-image: linear-gradient(
+      #000 33.33%,
+      #fff 33.33% 66.66%,
+      #009639 66.66% 100%
+    );
+    position: relative;
+    border-radius: 10px;
+    &::before {
+      content: "";
+      border-radius: 10px;
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      border: solid red;
+      border-color: transparent transparent transparent red;
+      border-width: 50px 20vw 50px;
+    }
+  }
+}

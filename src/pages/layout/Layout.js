@@ -11,6 +11,7 @@ import {
   getTelawaStatus,
 } from "../../rtk/slices/telawaSlice";
 import sass from "./Layout.module.scss";
+import FreePalestine from "../../components/freePalestine/FreePalestine";
 
 const Layout = () => {
   const currentPage = useSelector(getCurrentPage);
@@ -35,6 +36,7 @@ const Layout = () => {
 
   return (
     <div className={sass.container + " container"}>
+      <FreePalestine />
       <MainHeading
         headText={location.pathname === "/tafsir" ? "تفسير" : "تلاوة"}
       />
