@@ -31,8 +31,8 @@ function App() {
       return (
         <div className={sass.content}>
           <Routes>
-            <Route path="/*" element={<Layout />}>
-              <Route path="*" element={<Telawa />} />
+            <Route path="/" element={<Layout />}>
+              <Route path="" element={<Telawa />} />
               <Route path="tafsir" element={<Tafsir />} />
             </Route>
             <Route path="/search" element={<Search />} />
